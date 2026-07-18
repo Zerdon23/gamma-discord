@@ -1,0 +1,42 @@
+name: Gamma Levels to Discord
+
+on:
+  schedule:
+    - cron: '0 * * * *'      # every hour, on the hour (UTC). Levels change ~once a day.
+  workflow_dispatch: {}        # lets us run it manually to test
+
+# Allow the job to commit the updated state.json back to the repo
+permissions:
+  contents: write
+
+concurrency:
+  group: gamma
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check gamma levels and post if changed
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          SYMBOL: '_NDX'
+        run: node gamma-check.js
+
+      - name: Save updated levels
+        run: |
+          if ! git diff --quiet -- state.json; then
+            git config user.name "github-actions"
+            git config user.email "github-actions@users.noreply.github.com"
+            git add state.json
+            git commit -m "Update gamma levels"
+            git push
+          else
+            echo "No level change to commit."
+          fi
