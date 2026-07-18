@@ -68,6 +68,21 @@ async function fetchGex(symbol) {
   } finally { clearTimeout(timer); }
 }
 
+// Live NDX→NQ basis: NQ futures trade at a premium to the NDX index, and it drifts,
+// so we fetch the current NQ price (free, keyless) and use (NQ - NDX) as the chart offset.
+async function nqBasis(ndxSpot) {
+  if (!ndxSpot) return null;
+  try {
+    const res = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/NQ=F?interval=1d&range=1d',
+      { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } });
+    if (!res.ok) return null;
+    const j = await res.json();
+    const px = j && j.chart && j.chart.result && j.chart.result[0] && j.chart.result[0].meta && j.chart.result[0].meta.regularMarketPrice;
+    if (!px) return null;
+    return Math.round(px - ndxSpot);
+  } catch { return null; }
+}
+
 const fmt = (n) => (!n || !isFinite(n)) ? '—' : Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
 const niceName = (s) => { const x = s.replace(/^_/, ''); return x === 'NDX' ? 'NDX (Nasdaq)' : x; };
 
@@ -89,16 +104,17 @@ function topStrikesText(top) {
 
 // Build a Pine Script (v5) that draws the current gamma levels on a TradingView chart.
 // User pastes it into TradingView → Pine Editor → Add to chart.
-function buildPine(cur) {
+function buildPine(cur, offsetDefault) {
   const day = new Date().toISOString().slice(0, 10);
   const sym = niceName(cur.symbol);
+  const off = Math.round(Number(offsetDefault) || 0);
   const gexOf = {}; (cur.top || []).forEach(t => { gexOf[t.strike] = t.gex; });
   const extras = (cur.top || []).filter(t => t.strike !== cur.callWall && t.strike !== cur.putWall).slice(0, 4);
 
   const L = [];
   L.push('//@version=5');
-  L.push(`indicator("Gamma Levels ${sym} (${day})", overlay=true, max_labels_count=50)`);
-  L.push('offset = input.float(0.0, "Price offset — set to about +250 if your chart is NQ futures, else 0")');
+  L.push(`indicator("Gamma Levels ${sym}→NQ (${day})", overlay=true, max_labels_count=50)`);
+  L.push(`offset = input.float(${off}.0, "NDX→NQ offset (auto-set for NQ futures; set 0 for an NDX chart)")`);
   L.push('showExtra = input.bool(true, "Show other big gamma strikes")');
   L.push('');
   L.push('// --- Main levels ---');
@@ -142,7 +158,7 @@ function buildMessage(cur, prev) {
         { name: 'Spot (≈15m delayed)', value: fmt(cur.spot), inline: true },
         { name: '​', value: '​', inline: true },
         { name: 'Top gamma strikes ($GEX)', value: topStrikesText(cur.top), inline: false },
-        { name: '📈 Draw these on TradingView', value: 'Open the attached file below → copy all of it → in TradingView open the **Pine Editor** (bottom) → paste → **Add to chart**.', inline: false }
+        { name: '📈 Draw these on your NQ chart', value: 'Attached file is preset for **NQ futures**. Open it → copy all → in TradingView open the **Pine Editor** (bottom) → paste → **Add to chart**.', inline: false }
       ],
       footer: { text: 'CBOE free delayed data · walls update overnight · 🔴 call-heavy 🟢 put-heavy' },
       timestamp: new Date().toISOString()
@@ -159,9 +175,15 @@ const changed = (c, p) => !p || c.callWall !== p.callWall || c.putWall !== p.put
   if (!r.ok) { console.error('Fetch error:', r.error); process.exit(0); } // don't fail the run; try again next time
   const cur = r.data;
   console.log(`${cur.symbol}: Call ${fmt(cur.callWall)} | Put ${fmt(cur.putWall)} | Flip ${fmt(cur.flip)} | ${cur.regime} | spot ${fmt(cur.spot)}`);
+
+  // NQ chart offset (only meaningful for the Nasdaq/_NDX symbol)
+  const basis = SYMBOL === '_NDX' ? (await nqBasis(cur.spot)) : 0;
+  const tvOffset = basis == null ? 250 : basis; // fall back to ~250 if NQ price unavailable
+  console.log(`NQ offset baked into TradingView file: +${tvOffset}`);
+
   if (DRY) {
     console.log('\n--- Discord message preview ---\n' + JSON.stringify(buildMessage(cur, null), null, 2));
-    console.log('\n--- TradingView Pine file preview ---\n' + buildPine(cur));
+    console.log('\n--- TradingView Pine file preview ---\n' + buildPine(cur, tvOffset));
     return;
   }
 
@@ -172,8 +194,8 @@ const changed = (c, p) => !p || c.callWall !== p.callWall || c.putWall !== p.put
   // Post the embed AND attach the TradingView Pine file (multipart)
   const form = new FormData();
   form.append('payload_json', JSON.stringify(buildMessage(cur, prev)));
-  const fname = `Gamma-Levels-${cur.symbol.replace(/^_/, '')}-${new Date().toISOString().slice(0, 10)}.txt`;
-  form.append('files[0]', new Blob([buildPine(cur)], { type: 'text/plain' }), fname);
+  const fname = `Gamma-Levels-NQ-${new Date().toISOString().slice(0, 10)}.txt`;
+  form.append('files[0]', new Blob([buildPine(cur, tvOffset)], { type: 'text/plain' }), fname);
   const res = await fetch(WEBHOOK, { method: 'POST', body: form });
   if (!res.ok) { console.error(`Discord post failed HTTP ${res.status}: ${(await res.text().catch(() => '')).slice(0, 200)}`); process.exit(0); }
   console.log('Posted to Discord (with TradingView file).');
