@@ -2,7 +2,7 @@ name: Gamma Levels to Discord
 
 on:
   schedule:
-    - cron: '0 * * * *'      # every hour, on the hour (UTC). Levels change ~once a day.
+    - cron: '*/15 * * * *'   # every 15 minutes (UTC). Levels change ~once a day; this catches it fast.
   workflow_dispatch: {}        # lets us run it manually to test
 
 # Allow the job to commit the updated state.json back to the repo
