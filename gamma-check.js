@@ -87,6 +87,41 @@ function topStrikesText(top) {
   return top.map(t => `${t.gex >= 0 ? '🔴' : '🟢'} ${fmt(t.strike)} · ${fmtGex(t.gex)}`).join('\n');
 }
 
+// Build a Pine Script (v5) that draws the current gamma levels on a TradingView chart.
+// User pastes it into TradingView → Pine Editor → Add to chart.
+function buildPine(cur) {
+  const day = new Date().toISOString().slice(0, 10);
+  const sym = niceName(cur.symbol);
+  const gexOf = {}; (cur.top || []).forEach(t => { gexOf[t.strike] = t.gex; });
+  const extras = (cur.top || []).filter(t => t.strike !== cur.callWall && t.strike !== cur.putWall).slice(0, 4);
+
+  const L = [];
+  L.push('//@version=5');
+  L.push(`indicator("Gamma Levels ${sym} (${day})", overlay=true, max_labels_count=50)`);
+  L.push('offset = input.float(0.0, "Price offset — set to about +250 if your chart is NQ futures, else 0")');
+  L.push('showExtra = input.bool(true, "Show other big gamma strikes")');
+  L.push('');
+  L.push('// --- Main levels ---');
+  L.push(`plot(${cur.callWall} + offset, "Call Wall", color=color.new(color.red, 0), linewidth=3)`);
+  L.push(`plot(${cur.putWall} + offset, "Put Wall", color=color.new(color.green, 0), linewidth=3)`);
+  if (cur.flip) L.push(`plot(${cur.flip} + offset, "Gamma Flip", color=color.new(color.yellow, 0), linewidth=2)`);
+  if (extras.length) {
+    L.push('');
+    L.push('// --- Other big gamma strikes ---');
+    extras.forEach(t => {
+      const col = t.gex >= 0 ? 'color.new(color.red, 45)' : 'color.new(color.green, 45)';
+      L.push(`plot(showExtra ? ${t.strike} + offset : na, "Strike ${fmt(t.strike)}", color=${col}, linewidth=1)`);
+    });
+  }
+  L.push('');
+  L.push('// --- Labels on the latest bar ---');
+  L.push('if barstate.islast');
+  L.push(`    label.new(bar_index, ${cur.callWall} + offset, "Call Wall ${fmt(cur.callWall)}  ${fmtGex(gexOf[cur.callWall])}", style=label.style_label_left, color=color.new(color.red, 0), textcolor=color.white, size=size.small)`);
+  L.push(`    label.new(bar_index, ${cur.putWall} + offset, "Put Wall ${fmt(cur.putWall)}  ${fmtGex(gexOf[cur.putWall])}", style=label.style_label_left, color=color.new(color.green, 0), textcolor=color.white, size=size.small)`);
+  if (cur.flip) L.push(`    label.new(bar_index, ${cur.flip} + offset, "Gamma Flip ${fmt(cur.flip)}", style=label.style_label_left, color=color.new(color.orange, 0), textcolor=color.white, size=size.small)`);
+  return L.join('\n') + '\n';
+}
+
 function buildMessage(cur, prev) {
   const green = 0x3ba776, red = 0xe05a5a, pos = cur.regime === 'positive';
   const ch = [];
@@ -106,7 +141,8 @@ function buildMessage(cur, prev) {
         { name: 'Net GEX', value: `${fmtGex(cur.netGex)} · ${pos ? 'positive 🟩' : 'negative 🟥'}`, inline: true },
         { name: 'Spot (≈15m delayed)', value: fmt(cur.spot), inline: true },
         { name: '​', value: '​', inline: true },
-        { name: 'Top gamma strikes ($GEX)', value: topStrikesText(cur.top), inline: false }
+        { name: 'Top gamma strikes ($GEX)', value: topStrikesText(cur.top), inline: false },
+        { name: '📈 Draw these on TradingView', value: 'Open the attached file below → copy all of it → in TradingView open the **Pine Editor** (bottom) → paste → **Add to chart**.', inline: false }
       ],
       footer: { text: 'CBOE free delayed data · walls update overnight · 🔴 call-heavy 🟢 put-heavy' },
       timestamp: new Date().toISOString()
@@ -123,15 +159,24 @@ const changed = (c, p) => !p || c.callWall !== p.callWall || c.putWall !== p.put
   if (!r.ok) { console.error('Fetch error:', r.error); process.exit(0); } // don't fail the run; try again next time
   const cur = r.data;
   console.log(`${cur.symbol}: Call ${fmt(cur.callWall)} | Put ${fmt(cur.putWall)} | Flip ${fmt(cur.flip)} | ${cur.regime} | spot ${fmt(cur.spot)}`);
-  if (DRY) { console.log('\n--- Discord message preview ---\n' + JSON.stringify(buildMessage(cur, null), null, 2)); return; }
+  if (DRY) {
+    console.log('\n--- Discord message preview ---\n' + JSON.stringify(buildMessage(cur, null), null, 2));
+    console.log('\n--- TradingView Pine file preview ---\n' + buildPine(cur));
+    return;
+  }
 
   const state = loadState();
   const prev = state[SYMBOL];
   if (!changed(cur, prev)) { console.log('No change.'); return; }
 
-  const res = await fetch(WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(buildMessage(cur, prev)) });
+  // Post the embed AND attach the TradingView Pine file (multipart)
+  const form = new FormData();
+  form.append('payload_json', JSON.stringify(buildMessage(cur, prev)));
+  const fname = `Gamma-Levels-${cur.symbol.replace(/^_/, '')}-${new Date().toISOString().slice(0, 10)}.txt`;
+  form.append('files[0]', new Blob([buildPine(cur)], { type: 'text/plain' }), fname);
+  const res = await fetch(WEBHOOK, { method: 'POST', body: form });
   if (!res.ok) { console.error(`Discord post failed HTTP ${res.status}: ${(await res.text().catch(() => '')).slice(0, 200)}`); process.exit(0); }
-  console.log('Posted to Discord.');
+  console.log('Posted to Discord (with TradingView file).');
   state[SYMBOL] = { callWall: cur.callWall, putWall: cur.putWall, flip: cur.flip, at: new Date().toISOString() };
   saveState(state);
 })();
