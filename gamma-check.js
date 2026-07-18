@@ -121,10 +121,14 @@ function buildPine(cur, offsetDefault) {
 
   const L = [];
   L.push('//@version=5');
-  L.push(`indicator("Gamma Levels ${sym}→NQ (${day})", overlay=true, max_lines_count=60, max_labels_count=60, max_boxes_count=5)`);
+  L.push(`indicator("Gamma Levels ${sym}→NQ (${day})", overlay=true, max_lines_count=60, max_labels_count=60, max_boxes_count=500)`);
   L.push(`offset = input.float(${off}.0, "NDX→NQ offset (auto-set for NQ futures; 0 for an NDX chart)")`);
   L.push('showLabels = input.bool(true, "Show gamma $ labels")');
   L.push('shadeZone  = input.bool(true, "Shade the wall zone")');
+  L.push('showFVG    = input.bool(true, "Show imbalances (Fair Value Gaps)", group="Imbalances")');
+  L.push('fvgLen     = input.int(30, "Imbalance box length (bars)", minval=1, group="Imbalances")');
+  L.push('fvgBull    = input.color(color.new(#3ba776, 78), "Bullish imbalance", group="Imbalances")');
+  L.push('fvgBear    = input.color(color.new(#e05a5a, 78), "Bearish imbalance", group="Imbalances")');
   L.push('');
   L.push('callCol = color.new(#e05a5a, 0)   // call-heavy (positive gamma)');
   L.push('putCol  = color.new(#3ba776, 0)   // put-heavy (negative gamma)');
@@ -155,6 +159,14 @@ function buildPine(cur, offsetDefault) {
     L.push(`    if showLabels`);
     L.push(`        array.push(_lb, label.new(bar_index, ${r.strike} + offset, "${fmtGex(r.gex)}", xloc=xloc.bar_index, style=label.style_label_left, color=${col}, textcolor=color.white, size=size.small))`);
   });
+  L.push('');
+  L.push('// --- Imbalances (Fair Value Gaps): 3-candle price gaps ---');
+  L.push('bullFVG = showFVG and low > high[2]');
+  L.push('bearFVG = showFVG and high < low[2]');
+  L.push('if bullFVG');
+  L.push('    box.new(bar_index - 2, low, bar_index + fvgLen, high[2], bgcolor=fvgBull, border_color=color.new(#3ba776, 40))');
+  L.push('if bearFVG');
+  L.push('    box.new(bar_index - 2, low[2], bar_index + fvgLen, high, bgcolor=fvgBear, border_color=color.new(#e05a5a, 40))');
   return L.join('\n') + '\n';
 }
 
