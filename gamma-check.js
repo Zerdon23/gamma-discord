@@ -56,7 +56,13 @@ async function fetchGex(symbol) {
     if (!(flip > lo && flip < hi)) flip = 0;
     let total = 0; for (const v of net.values()) total += v * mult;
 
-    return { ok: true, data: { symbol, spot, callWall: cWall, putWall: pWall, flip, regime: total >= 0 ? 'positive' : 'negative' } };
+    // Top strikes by absolute $GEX — the "GEX levels" (biggest gamma concentrations)
+    const top = [...net.entries()]
+      .map(([k, v]) => ({ strike: k, gex: v * mult }))
+      .sort((a, b) => Math.abs(b.gex) - Math.abs(a.gex))
+      .slice(0, 6);
+
+    return { ok: true, data: { symbol, spot, callWall: cWall, putWall: pWall, flip, netGex: total, regime: total >= 0 ? 'positive' : 'negative', top } };
   } catch (e) {
     return { ok: false, error: e.name === 'AbortError' ? 'Timed out reaching CBOE.' : `Network error: ${e.message}` };
   } finally { clearTimeout(timer); }
@@ -64,6 +70,22 @@ async function fetchGex(symbol) {
 
 const fmt = (n) => (!n || !isFinite(n)) ? '—' : Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
 const niceName = (s) => { const x = s.replace(/^_/, ''); return x === 'NDX' ? 'NDX (Nasdaq)' : x; };
+
+// $ gamma exposure in a compact, signed form: +$1.24bn / -$930m
+function fmtGex(n) {
+  if (!n || !isFinite(n)) return '—';
+  const sign = n < 0 ? '-' : '+';
+  const a = Math.abs(n);
+  if (a >= 1e9) return `${sign}$${(a / 1e9).toFixed(2)}bn`;
+  if (a >= 1e6) return `${sign}$${(a / 1e6).toFixed(0)}m`;
+  return `${sign}$${Math.round(a).toLocaleString('en-US')}`;
+}
+
+function topStrikesText(top) {
+  if (!top || !top.length) return '—';
+  // 🔴 = call-heavy (positive GEX), 🟢 = put-heavy (negative GEX)
+  return top.map(t => `${t.gex >= 0 ? '🔴' : '🟢'} ${fmt(t.strike)} · ${fmtGex(t.gex)}`).join('\n');
+}
 
 function buildMessage(cur, prev) {
   const green = 0x3ba776, red = 0xe05a5a, pos = cur.regime === 'positive';
@@ -81,10 +103,12 @@ function buildMessage(cur, prev) {
         { name: '🔴 Call Wall', value: fmt(cur.callWall), inline: true },
         { name: '🟢 Put Wall', value: fmt(cur.putWall), inline: true },
         { name: '🟡 Gamma Flip', value: fmt(cur.flip), inline: true },
-        { name: 'Regime', value: pos ? 'Positive gamma 🟩' : 'Negative gamma 🟥', inline: true },
-        { name: 'Spot (≈15m delayed)', value: fmt(cur.spot), inline: true }
+        { name: 'Net GEX', value: `${fmtGex(cur.netGex)} · ${pos ? 'positive 🟩' : 'negative 🟥'}`, inline: true },
+        { name: 'Spot (≈15m delayed)', value: fmt(cur.spot), inline: true },
+        { name: '​', value: '​', inline: true },
+        { name: 'Top gamma strikes ($GEX)', value: topStrikesText(cur.top), inline: false }
       ],
-      footer: { text: 'CBOE free delayed data · walls update overnight' },
+      footer: { text: 'CBOE free delayed data · walls update overnight · 🔴 call-heavy 🟢 put-heavy' },
       timestamp: new Date().toISOString()
     }]
   };
@@ -93,11 +117,13 @@ function buildMessage(cur, prev) {
 const changed = (c, p) => !p || c.callWall !== p.callWall || c.putWall !== p.putWall || c.flip !== p.flip;
 
 (async () => {
-  if (!WEBHOOK) { console.error('DISCORD_WEBHOOK not set.'); process.exit(1); }
+  const DRY = process.env.DRY === '1';
+  if (!WEBHOOK && !DRY) { console.error('DISCORD_WEBHOOK not set.'); process.exit(1); }
   const r = await fetchGex(SYMBOL);
   if (!r.ok) { console.error('Fetch error:', r.error); process.exit(0); } // don't fail the run; try again next time
   const cur = r.data;
   console.log(`${cur.symbol}: Call ${fmt(cur.callWall)} | Put ${fmt(cur.putWall)} | Flip ${fmt(cur.flip)} | ${cur.regime} | spot ${fmt(cur.spot)}`);
+  if (DRY) { console.log('\n--- Discord message preview ---\n' + JSON.stringify(buildMessage(cur, null), null, 2)); return; }
 
   const state = loadState();
   const prev = state[SYMBOL];
