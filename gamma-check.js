@@ -56,11 +56,11 @@ async function fetchGex(symbol) {
     if (!(flip > lo && flip < hi)) flip = 0;
     let total = 0; for (const v of net.values()) total += v * mult;
 
-    // Top strikes by absolute $GEX — the "GEX levels" (biggest gamma concentrations)
+    // Strikes ranked by absolute $GEX — the "GEX levels" (biggest gamma concentrations)
     const top = [...net.entries()]
       .map(([k, v]) => ({ strike: k, gex: v * mult }))
       .sort((a, b) => Math.abs(b.gex) - Math.abs(a.gex))
-      .slice(0, 6);
+      .slice(0, 16);
 
     return { ok: true, data: { symbol, spot, callWall: cWall, putWall: pWall, flip, netGex: total, regime: total >= 0 ? 'positive' : 'negative', top } };
   } catch (e) {
@@ -99,7 +99,7 @@ function fmtGex(n) {
 function topStrikesText(top) {
   if (!top || !top.length) return '—';
   // 🔴 = call-heavy (positive GEX), 🟢 = put-heavy (negative GEX)
-  return top.map(t => `${t.gex >= 0 ? '🔴' : '🟢'} ${fmt(t.strike)} · ${fmtGex(t.gex)}`).join('\n');
+  return top.slice(0, 8).map(t => `${t.gex >= 0 ? '🔴' : '🟢'} ${fmt(t.strike)} · ${fmtGex(t.gex)}`).join('\n');
 }
 
 // Build a Pine Script (v5) that draws the current gamma levels on a TradingView chart.
@@ -108,33 +108,53 @@ function buildPine(cur, offsetDefault) {
   const day = new Date().toISOString().slice(0, 10);
   const sym = niceName(cur.symbol);
   const off = Math.round(Number(offsetDefault) || 0);
-  const gexOf = {}; (cur.top || []).forEach(t => { gexOf[t.strike] = t.gex; });
-  const extras = (cur.top || []).filter(t => t.strike !== cur.callWall && t.strike !== cur.putWall).slice(0, 4);
+
+  // All significant gamma strikes (walls are just the biggest ones). Show up to 12.
+  const levels = (cur.top || []).slice(0, 12);
+  const maxAbs = Math.max(1, ...levels.map(t => Math.abs(t.gex)));
+
+  // Each level -> a row in the Pine arrays: price(NDX), gamma label, width, isCall
+  const rows = levels.map(t => {
+    const width = 1 + Math.round(3 * (Math.abs(t.gex) / maxAbs)); // 1..4, thicker = more gamma
+    return { strike: t.strike, gex: t.gex, width, call: t.gex >= 0 };
+  });
 
   const L = [];
   L.push('//@version=5');
-  L.push(`indicator("Gamma Levels ${sym}→NQ (${day})", overlay=true, max_labels_count=50)`);
-  L.push(`offset = input.float(${off}.0, "NDX→NQ offset (auto-set for NQ futures; set 0 for an NDX chart)")`);
-  L.push('showExtra = input.bool(true, "Show other big gamma strikes")');
+  L.push(`indicator("Gamma Levels ${sym}→NQ (${day})", overlay=true, max_lines_count=60, max_labels_count=60, max_boxes_count=5)`);
+  L.push(`offset = input.float(${off}.0, "NDX→NQ offset (auto-set for NQ futures; 0 for an NDX chart)")`);
+  L.push('showLabels = input.bool(true, "Show gamma $ labels")');
+  L.push('shadeZone  = input.bool(true, "Shade the wall zone")');
   L.push('');
-  L.push('// --- Main levels ---');
-  L.push(`plot(${cur.callWall} + offset, "Call Wall", color=color.new(color.red, 0), linewidth=3)`);
-  L.push(`plot(${cur.putWall} + offset, "Put Wall", color=color.new(color.green, 0), linewidth=3)`);
-  if (cur.flip) L.push(`plot(${cur.flip} + offset, "Gamma Flip", color=color.new(color.yellow, 0), linewidth=2)`);
-  if (extras.length) {
-    L.push('');
-    L.push('// --- Other big gamma strikes ---');
-    extras.forEach(t => {
-      const col = t.gex >= 0 ? 'color.new(color.red, 45)' : 'color.new(color.green, 45)';
-      L.push(`plot(showExtra ? ${t.strike} + offset : na, "Strike ${fmt(t.strike)}", color=${col}, linewidth=1)`);
-    });
-  }
+  L.push('callCol = color.new(#e05a5a, 0)   // call-heavy (positive gamma)');
+  L.push('putCol  = color.new(#3ba776, 0)   // put-heavy (negative gamma)');
   L.push('');
-  L.push('// --- Labels on the latest bar ---');
+  L.push('var line[]  _ls = array.new_line()');
+  L.push('var label[] _lb = array.new_label()');
+  L.push('var box[]   _bx = array.new_box()');
+  L.push('');
   L.push('if barstate.islast');
-  L.push(`    label.new(bar_index, ${cur.callWall} + offset, "Call Wall ${fmt(cur.callWall)}  ${fmtGex(gexOf[cur.callWall])}", style=label.style_label_left, color=color.new(color.red, 0), textcolor=color.white, size=size.small)`);
-  L.push(`    label.new(bar_index, ${cur.putWall} + offset, "Put Wall ${fmt(cur.putWall)}  ${fmtGex(gexOf[cur.putWall])}", style=label.style_label_left, color=color.new(color.green, 0), textcolor=color.white, size=size.small)`);
-  if (cur.flip) L.push(`    label.new(bar_index, ${cur.flip} + offset, "Gamma Flip ${fmt(cur.flip)}", style=label.style_label_left, color=color.new(color.orange, 0), textcolor=color.white, size=size.small)`);
+  L.push('    for ln in _ls');
+  L.push('        line.delete(ln)');
+  L.push('    array.clear(_ls)');
+  L.push('    for lb in _lb');
+  L.push('        label.delete(lb)');
+  L.push('    array.clear(_lb)');
+  L.push('    for bx in _bx');
+  L.push('        box.delete(bx)');
+  L.push('    array.clear(_bx)');
+  L.push('    lft = math.max(0, bar_index - 300)');
+  if (cur.callWall && cur.putWall) {
+    const top = Math.max(cur.callWall, cur.putWall), bot = Math.min(cur.callWall, cur.putWall);
+    L.push('    if shadeZone');
+    L.push(`        array.push(_bx, box.new(lft, ${top} + offset, bar_index + 20, ${bot} + offset, border_color=color.new(color.gray, 70), bgcolor=color.new(color.gray, 92)))`);
+  }
+  rows.forEach(r => {
+    const col = r.call ? 'callCol' : 'putCol';
+    L.push(`    array.push(_ls, line.new(bar_index - 1, ${r.strike} + offset, bar_index, ${r.strike} + offset, extend=extend.both, color=${col}, width=${r.width}))`);
+    L.push(`    if showLabels`);
+    L.push(`        array.push(_lb, label.new(bar_index, ${r.strike} + offset, "${fmtGex(r.gex)}", xloc=xloc.bar_index, style=label.style_label_left, color=${col}, textcolor=color.white, size=size.small))`);
+  });
   return L.join('\n') + '\n';
 }
 
