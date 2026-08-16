@@ -1,5 +1,5 @@
 {
-  "builtAt": "2026-08-16T18:11:18.394Z",
+  "builtAt": "2026-08-16T18:15:01.943Z",
   "symbol": "NQ",
   "basis": 96,
   "indexSpot": 30046.14,
@@ -21,8 +21,8 @@
     },
     {
       "type": "FLIP",
-      "price": 28863.62,
-      "label": "GAMMA FLIP 28,864"
+      "price": 28863.32,
+      "label": "GAMMA FLIP 28,863"
     },
     {
       "type": "GAMMA_POS",
