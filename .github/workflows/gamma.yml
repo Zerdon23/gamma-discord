@@ -3,6 +3,7 @@ name: Gamma Levels to Discord
 on:
   schedule:
     - cron: '*/15 * * * *'   # every 15 minutes (UTC). Levels change ~once a day; this catches it fast.
+    - cron: '30 12 * * 1-5'  # weekdays 12:30 UTC ~= 08:30 ET. Builds the downloadable levels file.
   workflow_dispatch: {}        # lets us run it manually to test
 
 # Allow the job to commit the updated state.json back to the repo
@@ -40,3 +41,45 @@ jobs:
             git commit -m "Update gamma levels"
             git push
           fi
+
+  levels:
+    # Builds the downloadable DeepCharts levels file. Gated to the morning cron
+    # and manual runs only - the walls behind it are open-interest based and
+    # rebuild overnight, so a once-a-day file is the honest cadence rather than
+    # a limitation. `needs: check` is not for the data; it serialises the two
+    # jobs so they cannot both push to the repo in the same run.
+    needs: check
+    if: github.event.schedule == '30 12 * * 1-5' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run the offline tests first
+        # Bare `node --test`: passing a directory breaks on Node 24 and glob
+        # arguments need Node 21+. A broken build must not publish a file.
+        run: node --test
+
+      - name: Build the levels file
+        run: node build-levels.js
+
+      - name: Commit the levels file
+        run: |
+          git add levels/
+          if git diff --cached --quiet; then
+            echo "Levels unchanged."
+          else
+            git config user.name "github-actions"
+            git config user.email "github-actions@users.noreply.github.com"
+            git commit -m "Levels for $(date -u +%Y-%m-%d)"
+            git pull --rebase --autostash
+            git push
+          fi
+
+      - name: Announce in Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: node post-levels.js
