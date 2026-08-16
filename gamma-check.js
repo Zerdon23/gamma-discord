@@ -7,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const GF = require('./gammaflip.js');
 
 const STATE_FILE = path.join(__dirname, 'state.json');
 const SYMBOL = (process.env.SYMBOL || '_NDX').trim();
@@ -44,16 +45,14 @@ async function fetchGex(symbol) {
 
     const mult = 100 * spot * spot * 0.01;
     const strikes = [...net.keys()].sort((a, b) => a - b);
-    let cum = 0, prev = 0, flip = 0, fd = Infinity, first = true;
-    for (const k of strikes) {
-      cum += net.get(k) * mult;
-      if (!first && ((prev < 0 && cum >= 0) || (prev >= 0 && cum < 0)) && Math.abs(k - spot) < fd) { fd = Math.abs(k - spot); flip = k; }
-      prev = cum; first = false;
-    }
+    // Gamma flip, RE-PRICED (see gammaflip.js). The old version cumulated each
+    // strike's static gamma and reported the strike where the running total
+    // changed sign — ~690 pts wrong on NDX — then discarded anything that did not
+    // sit between the walls, which threw away the correct answer and posted no
+    // flip at all. 0 still means "no flip" downstream.
+    const flip = GF.zeroGamma(GF.parseChain(body), spot) || 0;
     let cWall = 0, pWall = 0, cB = -Infinity, pB = Infinity;
     for (const [k, v] of net) { if (v > cB) { cB = v; cWall = k; } if (v < pB) { pB = v; pWall = k; } }
-    const lo = Math.min(cWall, pWall), hi = Math.max(cWall, pWall);
-    if (!(flip > lo && flip < hi)) flip = 0;
     let total = 0; for (const v of net.values()) total += v * mult;
 
     // Strikes ranked by absolute $GEX — the "GEX levels" (biggest gamma concentrations)
