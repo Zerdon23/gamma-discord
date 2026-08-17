@@ -77,8 +77,7 @@ function build() {
   if (!WEBHOOK) { console.log('No webhook configured - not posting.'); return; }
 
   try {
-    // Multipart, matching the shape gamma-check.js already uses to attach its
-    // TradingView file. Node 20+ has FormData/Blob globally.
+    // Multipart. Node 20+ has FormData/Blob globally.
     const form = new FormData();
     form.append('payload_json', JSON.stringify(built.payload));
     form.append('files[0]', new Blob([built.xml], { type: 'application/xml' }), built.filename);

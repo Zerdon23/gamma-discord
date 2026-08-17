@@ -1,12 +1,19 @@
-name: Gamma Levels to Discord
+name: DeepCharts Levels
+
+# One job, once each weekday morning: build the NQ levels file from free data,
+# commit it, and post it to Discord with the file attached.
+#
+# The old 15-minute "gamma-check" poster was removed 2026-08-16. It announced
+# call/put wall and flip changes several times a day; the morning post now
+# carries those same walls plus the flip, the gamma shelves and the session
+# levels, in one message with a file people can actually import.
 
 on:
   schedule:
-    - cron: '*/15 * * * *'   # every 15 minutes (UTC). Levels change ~once a day; this catches it fast.
-    - cron: '30 12 * * 1-5'  # weekdays 12:30 UTC ~= 08:30 ET. Builds the downloadable levels file.
+    - cron: '30 12 * * 1-5'   # weekdays 12:30 UTC ~= 08:30 ET
   workflow_dispatch: {}        # lets us run it manually to test
 
-# Allow the job to commit the updated state.json back to the repo
+# Allow the job to commit the built levels file back to the repo
 permissions:
   contents: write
 
@@ -15,41 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Check gamma levels and post if changed
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          SYMBOL: '_NDX'
-        run: node gamma-check.js
-
-      - name: Save updated levels
-        run: |
-          git add state.json
-          if git diff --cached --quiet; then
-            echo "No level change to commit."
-          else
-            git config user.name "github-actions"
-            git config user.email "github-actions@users.noreply.github.com"
-            git commit -m "Update gamma levels"
-            git push
-          fi
-
   levels:
-    # Builds the downloadable DeepCharts levels file. Gated to the morning cron
-    # and manual runs only - the walls behind it are open-interest based and
-    # rebuild overnight, so a once-a-day file is the honest cadence rather than
-    # a limitation. `needs: check` is not for the data; it serialises the two
-    # jobs so they cannot both push to the repo in the same run.
-    needs: check
-    if: github.event.schedule == '30 12 * * 1-5' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -60,7 +33,8 @@ jobs:
 
       - name: Run the offline tests first
         # Bare `node --test`: passing a directory breaks on Node 24 and glob
-        # arguments need Node 21+. A broken build must not publish a file.
+        # arguments need Node 21+. A broken build must not publish a file that
+        # people are downloading and putting on live charts.
         run: node --test
 
       - name: Build the levels file
@@ -79,7 +53,7 @@ jobs:
             git push
           fi
 
-      - name: Announce in Discord
+      - name: Post to Discord with the levels file attached
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: node post-levels.js

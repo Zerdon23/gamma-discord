@@ -1,11 +1,11 @@
 /*
  * CBOE delayed-chain gamma, extracted so the levels file can reuse it.
  *
- * The chain math here is COPIED VERBATIM from gamma-check.js rather than shared
- * with it. gamma-check.js is an IIFE that runs on import and posts to a live
- * Discord channel every 15 minutes: requiring it would fire it, and refactoring
- * it would put a working production poster at risk inside a new-feature change.
- * The flip is NOT copied - gammaflip.js is already a module and is required.
+ * The chain math here was copied verbatim from gamma-check.js, the 15-minute
+ * Discord poster this repo used to run. That file was an IIFE which fired on
+ * import, so it could never be required - hence the copy. It was deleted on
+ * 2026-08-16 once the daily levels post replaced it; git history has it.
+ * The flip was never copied - gammaflip.js is a module and is required.
  *
  * The endpoint is free and needs no key, which is the whole reason a shareable
  * download can exist at all: a paid subscription key cannot ship inside a public
@@ -66,7 +66,8 @@ function parseGex(body) {
   // Ranked by ABSOLUTE gamma - the biggest concentrations, either side.
   top.sort((a, b) => Math.abs(b.gex) - Math.abs(a.gex));
 
-  // 0 means "no flip", the same as it does downstream in gamma-check.js.
+  // 0 means "no flip could be priced". build-levels.js checks for it and draws
+  // nothing rather than putting a line at price zero.
   const flip = GF.zeroGamma(GF.parseChain(body), spot) || 0;
 
   return {
