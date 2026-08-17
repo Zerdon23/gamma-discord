@@ -1,9 +1,9 @@
 {
-  "builtAt": "2026-08-16T18:45:17.744Z",
+  "builtAt": "2026-08-17T01:34:14.555Z",
   "symbol": "NQ",
-  "basis": 96,
+  "basis": 187,
   "indexSpot": 30046.14,
-  "nqSpot": 30142.14,
+  "nqSpot": 30233.14,
   "regime": "positive",
   "netGex": 4520443049.899007,
   "source": "CBOE delayed chain (_NDX) + Yahoo NQ=F",
@@ -11,48 +11,48 @@
   "levels": [
     {
       "type": "CALL_WALL",
-      "price": 30096,
-      "label": "CALL WALL 30,096"
+      "price": 30187,
+      "label": "CALL WALL 30,187"
     },
     {
       "type": "PUT_WALL",
-      "price": 27096,
-      "label": "PUT WALL 27,096"
+      "price": 27187,
+      "label": "PUT WALL 27,187"
     },
     {
       "type": "FLIP",
-      "price": 28860.9,
-      "label": "GAMMA FLIP 28,861"
+      "price": 28915.46,
+      "label": "GAMMA FLIP 28,915"
     },
     {
       "type": "GAMMA_POS",
-      "price": 30596,
-      "label": "+GAMMA 30,596 · 343m"
+      "price": 30687,
+      "label": "+GAMMA 30,687 · 343m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 28646,
-      "label": "+GAMMA 28,646 · 310m"
+      "price": 28737,
+      "label": "+GAMMA 28,737 · 310m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 30196,
-      "label": "+GAMMA 30,196 · 287m"
+      "price": 30287,
+      "label": "+GAMMA 30,287 · 287m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 29996,
-      "label": "+GAMMA 29,996 · 279m"
+      "price": 30087,
+      "label": "+GAMMA 30,087 · 279m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 31096,
-      "label": "+GAMMA 31,096 · 268m"
+      "price": 31187,
+      "label": "+GAMMA 31,187 · 268m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 29196,
-      "label": "-GAMMA 29,196 · 240m"
+      "price": 29287,
+      "label": "-GAMMA 29,287 · 240m"
     },
     {
       "type": "PDH",
@@ -66,13 +66,13 @@
     },
     {
       "type": "ONH",
-      "price": 30283,
-      "label": "OVERNIGHT HIGH 30,283"
+      "price": 30239,
+      "label": "OVERNIGHT HIGH 30,239"
     },
     {
       "type": "ONL",
-      "price": 30124.25,
-      "label": "OVERNIGHT LOW 30,124"
+      "price": 30185.5,
+      "label": "OVERNIGHT LOW 30,186"
     }
   ]
 }
