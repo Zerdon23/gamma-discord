@@ -1,22 +1,38 @@
 name: DeepCharts Levels
 
-# One job, once each weekday morning: build the NQ levels file from free data,
-# commit it, and post it to Discord with the file attached.
+# Two cadences, one job.
+#
+#   morning  - build the NQ levels, commit them, post to the public gamma
+#              channel and to the private crew channel. This is the daily
+#              anchor and it posts whether or not anything moved.
+#   intraday - every 30 minutes while the session is open, rebuild and post
+#              to the private crew channel ONLY if a level actually moved.
+#
+# The intraday run deliberately does NOT commit levels/. The public file and
+# the injector app that downloads it stay on their once-a-morning cadence -
+# an intraday run rebuilds in the workspace, posts, and lets the runner throw
+# the rebuild away. The only thing it commits is where it got to.
 #
 # The old 15-minute "gamma-check" poster was removed 2026-08-16. It announced
-# call/put wall and flip changes several times a day; the morning post now
-# carries those same walls plus the flip, the gamma shelves and the session
-# levels, in one message with a file people can actually import.
+# wall and flip changes several times a day with no change detection; the
+# guards in notify.js are what make an intraday cadence tolerable this time.
 
 on:
   schedule:
-    - cron: '30 12 * * 1-5'   # weekdays 12:30 UTC ~= 08:30 ET
-  workflow_dispatch: {}        # lets us run it manually to test
+    - cron: '30 12 * * 1-5'          # weekdays 12:30 UTC ~= 08:30 ET - the morning set
+    - cron: '*/30 13-20 * * 1-5'     # every 30 min 13:00-20:59 UTC ~= 09:00-16:59 ET
+  workflow_dispatch:
+    inputs:
+      morning:
+        description: 'Post the full morning set, even if nothing moved'
+        type: boolean
+        default: false
 
-# Allow the job to commit the built levels file back to the repo
 permissions:
   contents: write
 
+# Serialises every run. Two runs pushing at once is what produced a rebase
+# conflict on 2026-08-16, and the intraday cadence makes that far likelier.
 concurrency:
   group: gamma
   cancel-in-progress: false
@@ -31,6 +47,18 @@ jobs:
         with:
           node-version: '20'
 
+      # Which kind of run is this? A schedule identifies itself by its own cron
+      # expression; a manual run uses the checkbox.
+      - name: Decide the cadence
+        id: cadence
+        run: |
+          if [ "${{ github.event.schedule }}" = "30 12 * * 1-5" ] \
+          || [ "${{ inputs.morning }}" = "true" ]; then
+            echo "morning=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "morning=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Run the offline tests first
         # Bare `node --test`: passing a directory breaks on Node 24 and glob
         # arguments need Node 21+. A broken build must not publish a file that
@@ -40,7 +68,9 @@ jobs:
       - name: Build the levels file
         run: node build-levels.js
 
+      # ----------------------------------------------------- morning only
       - name: Commit the levels file
+        if: steps.cadence.outputs.morning == 'true'
         run: |
           git add levels/
           if git diff --cached --quiet; then
@@ -53,7 +83,30 @@ jobs:
             git push
           fi
 
-      - name: Post to Discord with the levels file attached
+      - name: Post to the public channel with the levels file attached
+        if: steps.cadence.outputs.morning == 'true'
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: node post-levels.js
+
+      # ------------------------------------------- private crew channel
+      # Runs on BOTH cadences. On the morning run it always posts; on an
+      # intraday run notify.js decides, and mostly decides no.
+      - name: Update the crew channel
+        env:
+          FRIENDS_BOT_TOKEN: ${{ secrets.FRIENDS_BOT_TOKEN }}
+          FRIENDS_CHANNEL_ID: ${{ secrets.FRIENDS_CHANNEL_ID }}
+        run: node friends-update.js ${{ steps.cadence.outputs.morning == 'true' && '--morning' || '' }}
+
+      - name: Remember what the crew channel was told
+        run: |
+          git add state/ || true
+          if git diff --cached --quiet; then
+            echo "No crew post to record."
+          else
+            git config user.name "github-actions"
+            git config user.email "github-actions@users.noreply.github.com"
+            git commit -m "Crew channel updated $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase --autostash
+            git push
+          fi
