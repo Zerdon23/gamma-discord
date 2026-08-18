@@ -7,14 +7,14 @@
 //   A random price held 62%, so A is a coin flip and B is BELOW random.
 // Prices are NQ futures scale - use on an NQ or MNQ chart, no offset needed.
 // Snapshot of one day. Re-export when the levels change.
-// Generator: pine.py 408dcb3f0f
+// Generator: pine.py 2c03a2e219
 //
 // GOLDBACH GRID: drawn, NOT scored. Measured over 2790 levels and 4 years,
 //   levels sitting on a JT breaker line held 52% against 58% for levels
 //   that did not, and the real 729 anchor beat only 8% of arbitrary
 //   anchors of the same density. Canonical 0.41/0.59 and 0.50 failed too.
 //   So a coincidence is tagged with that number and never upgrades a grade.
-indicator("AXION Graded Levels 2026-08-18 [brandaqq]", overlay=true, max_lines_count=472, max_labels_count=472, max_boxes_count=53)
+indicator("AXION Graded Levels 2026-08-18 [brandaqq]", overlay=true, max_lines_count=470, max_labels_count=470, max_boxes_count=52)
 
 g = "Which grades to show"
 showSplus = input.bool(true, "S+  held 83%", group=g)
@@ -624,6 +624,7 @@ if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1785103200000, 28763.25, 1785186000000, 28763.25, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1785103200000, 28708.53, 1785186000000, 28708.53, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1785103200000, 28658.50, 1785186000000, 28658.50, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
+if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1785103200000, 28645.00, 1785186000000, 28645.00, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1785103200000, 28618.53, 1785186000000, 28618.53, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1785103200000, 28525.00, 1785186000000, 28525.00, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
@@ -664,6 +665,7 @@ if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1785276000000, 27736.25, 1785358800000, 27736.25, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1785276000000, 27704.25, 1785358800000, 27704.25, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1785276000000, 27603.50, 1785358800000, 27603.50, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
+if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1785276000000, 27394.00, 1785358800000, 27394.00, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1785362400000, 28297.75, 1785445200000, 28297.75, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1785362400000, 28178.25, 1785445200000, 28178.25, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
@@ -704,6 +706,7 @@ if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1786053600000, 30021.31, 1786136400000, 30021.31, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786053600000, 29921.31, 1786136400000, 29921.31, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786053600000, 29867.75, 1786136400000, 29867.75, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
+if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1786053600000, 29855.25, 1786136400000, 29855.25, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786053600000, 29821.31, 1786136400000, 29821.31, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786053600000, 29771.31, 1786136400000, 29771.31, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
@@ -744,6 +747,7 @@ if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1786485600000, 29610.13, 1786568400000, 29610.13, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786485600000, 29310.13, 1786568400000, 29310.13, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786485600000, 29210.13, 1786568400000, 29210.13, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
+if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1786572000000, 30608.62, 1786654800000, 30608.62, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786572000000, 30408.62, 1786654800000, 30408.62, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786572000000, 30308.62, 1786654800000, 30308.62, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
@@ -784,6 +788,7 @@ if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1786744800000, 30250.00, 1786827600000, 30250.00, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786744800000, 30197.77, 1786827600000, 30197.77, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786744800000, 30157.77, 1786827600000, 30157.77, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
+if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1786744800000, 30137.60, 1786827600000, 30137.60, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786744800000, 30125.31, 1786827600000, 30125.31, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786744800000, 30100.00, 1786827600000, 30100.00, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
@@ -824,6 +829,7 @@ if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1786917600000, 30157.77, 1787000400000, 30157.77, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786917600000, 30137.60, 1787000400000, 30137.60, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786917600000, 30125.00, 1787000400000, 30125.00, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
+if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1786917600000, 30100.00, 1787000400000, 30100.00, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786917600000, 30050.99, 1787000400000, 30050.99, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1786917600000, 30017.77, 1787000400000, 30017.77, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
@@ -855,15 +861,24 @@ if barstate.islast and histOn and (histMin == "All grades")
     array.push(_L, line.new(1787004000000, 29068.88, 1787086800000, 29068.88, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
     array.push(_L, line.new(1787004000000, 29032.65, 1787086800000, 29032.65, xloc.bar_time, extend.none, color.new(cB, math.min(90, 45 + histFade)), line.style_dotted, 1))
 // ---------- S+ (1) ----------
-if barstate.islast and showSplus and (maxDist == 0 or math.abs(close - 29742.71) <= maxDist)
+if barstate.islast and showSplus and (maxDist == 0 or math.abs(close - 29742.94) <= maxDist)
     if zoneGrades != "None"
-        array.push(_X, box.new(bar_index - 300, 29742.71, bar_index, 29725.00, border_color=color.new(cSplus, 55), border_width=1, bgcolor=color.new(cSplus, 82), extend=ext))
-    array.push(_L, line.new(bar_index - 300, 29742.71, bar_index, 29742.71, xloc.bar_index, ext, color.new(cSplus, 0), line.style_solid, 4))
+        array.push(_X, box.new(bar_index - 300, 29742.94, bar_index, 29725.00, border_color=color.new(cSplus, 55), border_width=1, bgcolor=color.new(cSplus, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 29742.94, bar_index, 29742.94, xloc.bar_index, ext, color.new(cSplus, 0), line.style_solid, 4))
     if showLabels
         txt = labelDetail == "Full" ? "[S+ 4 - 83%] Call Wall (OI) + HVL + London Low + 1D Min + BL 4 + Call Resistance 0DTE + Gamma Wall 0DTE  (18pt zone)" : labelDetail == "Short" ? "S+ 83% Call Wall (OI) +6 more  (18pt zone)" : "S+ 83%"
-        array.push(_T, label.new(bar_index - labelGap, 29742.71, txt, xloc.bar_index, yloc.price, color.new(cSplus, plateTransp), label.style_label_right, color.white, size.small))
+        array.push(_T, label.new(bar_index - labelGap, 29742.94, txt, xloc.bar_index, yloc.price, color.new(cSplus, plateTransp), label.style_label_right, color.white, size.small))
 
-// ---------- A (6) ----------
+// ---------- S (1) ----------
+if barstate.islast and showS and (maxDist == 0 or math.abs(close - 29892.94) <= maxDist)
+    if zoneGrades != "None"
+        array.push(_X, box.new(bar_index - 300, 29896.50, bar_index, 29892.94, border_color=color.new(cS, 55), border_width=1, bgcolor=color.new(cS, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 29892.94, bar_index, 29892.94, xloc.bar_index, ext, color.new(cS, 0), line.style_solid, 3))
+    if showLabels
+        txt = labelDetail == "Full" ? "[S 3 - 74%] GEX strike + London High + Void A 12H/1B top  (4pt zone)" : labelDetail == "Short" ? "S 74% GEX strike +2 more  (4pt zone)" : "S 74%"
+        array.push(_T, label.new(bar_index - labelGap, 29892.94, txt, xloc.bar_index, yloc.price, color.new(cS, plateTransp), label.style_label_right, color.white, size.small))
+
+// ---------- A (5) ----------
 if barstate.islast and showA and (maxDist == 0 or math.abs(close - 30400.00) <= maxDist)
     array.push(_L, line.new(bar_index - 300, 30400.00, bar_index, 30400.00, xloc.bar_index, ext, color.new(cA, 10), line.style_solid, 2))
     if showLabels
@@ -879,29 +894,22 @@ if barstate.islast and showA and (maxDist == 0 or math.abs(close - 30080.00) <= 
     if showLabels
         txt = labelDetail == "Full" ? "[A 2 - 60%] HVL 0DTE + BL 10" : labelDetail == "Short" ? "A 60% HVL 0DTE +1 more" : "A 60%"
         array.push(_T, label.new(bar_index - labelGap - 22, 30080.00, txt, xloc.bar_index, yloc.price, color.new(cA, plateTransp), label.style_label_right, color.white, size.small))
-if barstate.islast and showA and (maxDist == 0 or math.abs(close - 29896.50) <= maxDist)
-    if zoneGrades == "All grades"
-        array.push(_X, box.new(bar_index - 300, 29896.50, bar_index, 29893.50, border_color=color.new(cA, 55), border_width=1, bgcolor=color.new(cA, 82), extend=ext))
-    array.push(_L, line.new(bar_index - 300, 29896.50, bar_index, 29896.50, xloc.bar_index, ext, color.new(cA, 10), line.style_solid, 2))
-    if showLabels
-        txt = labelDetail == "Full" ? "[A 2 - 60%] London High + Void A 12H/1B top  (3pt zone)" : labelDetail == "Short" ? "A 60% London High +1 more  (3pt zone)" : "A 60%"
-        array.push(_T, label.new(bar_index - labelGap, 29896.50, txt, xloc.bar_index, yloc.price, color.new(cA, plateTransp), label.style_label_right, color.white, size.small))
 if barstate.islast and showA and (maxDist == 0 or math.abs(close - 29850.00) <= maxDist)
     if zoneGrades == "All grades"
         array.push(_X, box.new(bar_index - 300, 29853.00, bar_index, 29850.00, border_color=color.new(cA, 55), border_width=1, bgcolor=color.new(cA, 82), extend=ext))
     array.push(_L, line.new(bar_index - 300, 29850.00, bar_index, 29850.00, xloc.bar_index, ext, color.new(cA, 10), line.style_solid, 2))
     if showLabels
         txt = labelDetail == "Full" ? "[A 2 - 60%] GEX 5 + Asia Low  (3pt zone)" : labelDetail == "Short" ? "A 60% GEX 5 +1 more  (3pt zone)" : "A 60%"
-        array.push(_T, label.new(bar_index - labelGap - 11, 29850.00, txt, xloc.bar_index, yloc.price, color.new(cA, plateTransp), label.style_label_right, color.white, size.small))
-if barstate.islast and showA and (maxDist == 0 or math.abs(close - 29472.62) <= maxDist)
+        array.push(_T, label.new(bar_index - labelGap - 22, 29850.00, txt, xloc.bar_index, yloc.price, color.new(cA, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showA and (maxDist == 0 or math.abs(close - 29472.94) <= maxDist)
     if zoneGrades == "All grades"
-        array.push(_X, box.new(bar_index - 300, 29472.62, bar_index, 29468.79, border_color=color.new(cA, 55), border_width=1, bgcolor=color.new(cA, 82), extend=ext))
-    array.push(_L, line.new(bar_index - 300, 29472.62, bar_index, 29472.62, xloc.bar_index, ext, color.new(cA, 10), line.style_solid, 2))
+        array.push(_X, box.new(bar_index - 300, 29472.94, bar_index, 29468.79, border_color=color.new(cA, 55), border_width=1, bgcolor=color.new(cA, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 29472.94, bar_index, 29472.94, xloc.bar_index, ext, color.new(cA, 10), line.style_solid, 2))
     if showLabels
         txt = labelDetail == "Full" ? "[A 2 - 60%] Put Wall (vol) + BL 9  (4pt zone)" : labelDetail == "Short" ? "A 60% Put Wall (vol) +1 more  (4pt zone)" : "A 60%"
-        array.push(_T, label.new(bar_index - labelGap, 29472.62, txt, xloc.bar_index, yloc.price, color.new(cA, plateTransp), label.style_label_right, color.white, size.small))
+        array.push(_T, label.new(bar_index - labelGap, 29472.94, txt, xloc.bar_index, yloc.price, color.new(cA, plateTransp), label.style_label_right, color.white, size.small))
 
-// ---------- B (26) ----------
+// ---------- B (25) ----------
 if barstate.islast and showB and (maxDist == 0 or math.abs(close - 31707.10) <= maxDist)
     array.push(_L, line.new(bar_index - 300, 31707.10, bar_index, 31707.10, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
@@ -939,7 +947,7 @@ if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30285.99) <= 
         array.push(_T, label.new(bar_index - labelGap - 11, 30285.99, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
 if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30100.00) <= maxDist)
     if zoneGrades == "All grades"
-        array.push(_X, box.new(bar_index - 300, 30100.00, bar_index, 30092.71, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
+        array.push(_X, box.new(bar_index - 300, 30100.00, bar_index, 30092.94, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
     array.push(_L, line.new(bar_index - 300, 30100.00, bar_index, 30100.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
         txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 4 + GEX strike  (7pt zone)" : labelDetail == "Short" ? "B 52% GEX 4 +1 more  (7pt zone)" : "B 52%"
@@ -958,47 +966,42 @@ if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29870.00) <= 
     array.push(_L, line.new(bar_index - 300, 29870.00, bar_index, 29870.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
         txt = labelDetail == "Full" ? "[B 1 - 52%] Void A 12H/1B bot" : labelDetail == "Short" ? "B 52% Void A 12H/1B bot" : "B 52%"
-        array.push(_T, label.new(bar_index - labelGap, 29870.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+        array.push(_T, label.new(bar_index - labelGap - 11, 29870.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
 if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29800.00) <= maxDist)
     if zoneGrades == "All grades"
-        array.push(_X, box.new(bar_index - 300, 29800.00, bar_index, 29792.71, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
+        array.push(_X, box.new(bar_index - 300, 29800.00, bar_index, 29792.94, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
     array.push(_L, line.new(bar_index - 300, 29800.00, bar_index, 29800.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
         txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 1 + Call Wall (vol)  (7pt zone)" : labelDetail == "Short" ? "B 52% GEX 1 +1 more  (7pt zone)" : "B 52%"
         array.push(_T, label.new(bar_index - labelGap, 29800.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
-if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29711.72) <= maxDist)
-    array.push(_L, line.new(bar_index - 300, 29711.72, bar_index, 29711.72, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
-    if showLabels
-        txt = labelDetail == "Full" ? "[B 1 - 52%] Gamma Flip" : labelDetail == "Short" ? "B 52% Gamma Flip" : "B 52%"
-        array.push(_T, label.new(bar_index - labelGap, 29711.72, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
 if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29700.00) <= maxDist)
     if zoneGrades == "All grades"
-        array.push(_X, box.new(bar_index - 300, 29700.00, bar_index, 29692.71, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
+        array.push(_X, box.new(bar_index - 300, 29700.00, bar_index, 29692.94, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
     array.push(_L, line.new(bar_index - 300, 29700.00, bar_index, 29700.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
-        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 7 + GEX strike  (7pt zone)" : labelDetail == "Short" ? "B 52% GEX 7 +1 more  (7pt zone)" : "B 52%"
-        array.push(_T, label.new(bar_index - labelGap - 11, 29700.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 6 + GEX strike  (7pt zone)" : labelDetail == "Short" ? "B 52% GEX 6 +1 more  (7pt zone)" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29700.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
 if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29678.00) <= maxDist)
     array.push(_L, line.new(bar_index - 300, 29678.00, bar_index, 29678.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
         txt = labelDetail == "Full" ? "[B 1 - 52%] Overnight Low" : labelDetail == "Short" ? "B 52% Overnight Low" : "B 52%"
-        array.push(_T, label.new(bar_index - labelGap - 22, 29678.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+        array.push(_T, label.new(bar_index - labelGap - 11, 29678.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
 if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29650.00) <= maxDist)
     array.push(_L, line.new(bar_index - 300, 29650.00, bar_index, 29650.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
         txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 10" : labelDetail == "Short" ? "B 52% GEX 10" : "B 52%"
         array.push(_T, label.new(bar_index - labelGap, 29650.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
-if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29600.00) <= maxDist)
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29603.97) <= maxDist)
     if zoneGrades == "All grades"
-        array.push(_X, box.new(bar_index - 300, 29600.00, bar_index, 29592.71, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
-    array.push(_L, line.new(bar_index - 300, 29600.00, bar_index, 29600.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+        array.push(_X, box.new(bar_index - 300, 29603.97, bar_index, 29592.94, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 29603.97, bar_index, 29603.97, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
-        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 9 + GEX strike  (7pt zone)" : labelDetail == "Short" ? "B 52% GEX 9 +1 more  (7pt zone)" : "B 52%"
-        array.push(_T, label.new(bar_index - labelGap, 29600.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+        txt = labelDetail == "Full" ? "[B 1 - 52%] Gamma Flip + GEX 9 + GEX strike  (11pt zone)" : labelDetail == "Short" ? "B 52% Gamma Flip +2 more  (11pt zone)" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29603.97, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
 if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29550.00) <= maxDist)
     array.push(_L, line.new(bar_index - 300, 29550.00, bar_index, 29550.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
-        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 6" : labelDetail == "Short" ? "B 52% GEX 6" : "B 52%"
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 7" : labelDetail == "Short" ? "B 52% GEX 7" : "B 52%"
         array.push(_T, label.new(bar_index - labelGap, 29550.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
 if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29500.00) <= maxDist)
     array.push(_L, line.new(bar_index - 300, 29500.00, bar_index, 29500.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
@@ -1006,27 +1009,25 @@ if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29500.00) <= 
         txt = labelDetail == "Full" ? "[B 1 - 52%] Put Support + Put Support 0DTE" : labelDetail == "Short" ? "B 52% Put Support +1 more" : "B 52%"
         array.push(_T, label.new(bar_index - labelGap, 29500.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
 if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29450.00) <= maxDist)
-    if zoneGrades == "All grades"
-        array.push(_X, box.new(bar_index - 300, 29450.00, bar_index, 29442.71, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
     array.push(_L, line.new(bar_index - 300, 29450.00, bar_index, 29450.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
-        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 8 + GEX strike  (7pt zone)" : labelDetail == "Short" ? "B 52% GEX 8 +1 more  (7pt zone)" : "B 52%"
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 8" : labelDetail == "Short" ? "B 52% GEX 8" : "B 52%"
         array.push(_T, label.new(bar_index - labelGap - 11, 29450.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
-if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29192.71) <= maxDist)
-    array.push(_L, line.new(bar_index - 300, 29192.71, bar_index, 29192.71, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29192.94) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29192.94, bar_index, 29192.94, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
         txt = labelDetail == "Full" ? "[B 1 - 52%] Put Wall (OI)" : labelDetail == "Short" ? "B 52% Put Wall (OI)" : "B 52%"
-        array.push(_T, label.new(bar_index - labelGap, 29192.71, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
-if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29167.71) <= maxDist)
-    array.push(_L, line.new(bar_index - 300, 29167.71, bar_index, 29167.71, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+        array.push(_T, label.new(bar_index - labelGap, 29192.94, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29167.94) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29167.94, bar_index, 29167.94, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
         txt = labelDetail == "Full" ? "[B 1 - 52%] GEX strike" : labelDetail == "Short" ? "B 52% GEX strike" : "B 52%"
-        array.push(_T, label.new(bar_index - labelGap, 29167.71, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
-if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29092.71) <= maxDist)
-    array.push(_L, line.new(bar_index - 300, 29092.71, bar_index, 29092.71, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+        array.push(_T, label.new(bar_index - labelGap, 29167.94, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29092.94) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29092.94, bar_index, 29092.94, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
         txt = labelDetail == "Full" ? "[B 1 - 52%] GEX strike" : labelDetail == "Short" ? "B 52% GEX strike" : "B 52%"
-        array.push(_T, label.new(bar_index - labelGap, 29092.71, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+        array.push(_T, label.new(bar_index - labelGap, 29092.94, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
 if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29068.88) <= maxDist)
     array.push(_L, line.new(bar_index - 300, 29068.88, bar_index, 29068.88, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
     if showLabels
@@ -1045,4 +1046,4 @@ if barstate.islast and showB and (maxDist == 0 or math.abs(close - 27788.50) <= 
         txt = labelDetail == "Full" ? "[B 1 - 52%] Void A 9H/3B top + Void A 9H/3B bot  (4pt zone)" : labelDetail == "Short" ? "B 52% Void A 9H/3B top +1 more  (4pt zone)" : "B 52%"
         array.push(_T, label.new(bar_index - labelGap, 27788.50, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
 
-// END OF SCRIPT - 1048 lines. If your copy stops before this line it was cut off in transit - ask for the file again.
+// END OF SCRIPT - 1049 lines. If your copy stops before this line it was cut off in transit - ask for the file again.
