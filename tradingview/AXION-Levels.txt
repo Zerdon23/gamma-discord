@@ -1,0 +1,718 @@
+//@version=6
+// INSTALL: open the Pine Editor, press Ctrl+A to select everything already there, then paste over it. //@version=6 must stay the very first line.
+// AXION Graded Levels 2026-08-18 [brandaqq]
+// Generated from the AXION Levels graded set for 2026-08-18.
+// Grade = how many INDEPENDENT source families agree at that price.
+//   S+ 4+ sources, held 83% | S 3, held 74% | A 2, held 60% | B 1, held 52%
+//   A random price held 62%, so A is a coin flip and B is BELOW random.
+// Prices are NQ futures scale - use on an NQ or MNQ chart, no offset needed.
+// Snapshot of one day. Re-export when the levels change.
+// Generator: pine.py 6900f93c8b
+//
+// GOLDBACH GRID: drawn, NOT scored. Measured over 2790 levels and 4 years,
+//   levels sitting on a JT breaker line held 52% against 58% for levels
+//   that did not, and the real 729 anchor beat only 8% of arbitrary
+//   anchors of the same density. Canonical 0.41/0.59 and 0.50 failed too.
+//   So a coincidence is tagged with that number and never upgrades a grade.
+indicator("AXION Graded Levels 2026-08-18 [brandaqq]", overlay=true, max_lines_count=156, max_labels_count=156, max_boxes_count=53)
+
+g = "Which grades to show"
+showSplus = input.bool(true, "S+  held 83%", group=g)
+showS = input.bool(true, "S  held 74%", group=g)
+showA = input.bool(true, "A  held 60%", group=g)
+showB = input.bool(true, "B  held 52% - BELOW a random price", group=g)
+gC = "Colours - retune these if you change chart theme"
+cSplus = input.color(#a16207, "S+", group=gC)
+cS = input.color(#15803d, "S", group=gC)
+cA = input.color(#1d4ed8, "A", group=gC)
+cB = input.color(#52525b, "B", group=gC)
+cGB = input.color(#7e22ce, "Goldbach grid", group=gC)
+gL = "Look"
+showLabels = input.bool(true, "Labels", group=gL)
+plateTransp = input.int(0, "Label plate transparency", minval=0, maxval=100, group=gL)
+labelGap = input.int(3, "Bars between the two label columns", minval=0, maxval=60, group=gL)
+zoneGrades = input.string("S+ and S only", "Shade zones for", options=["S+ and S only", "All grades", "None"], group=gL)
+labelDetail = input.string("Short", "Label detail", options=["Full", "Short", "Grade only"], group=gL)
+extendLeft = input.bool(false, "Extend left as well", group=gL)
+maxDist = input.int(300, "Hide levels further than this from price (0 = show all)", minval=0, group=gL)
+gGB = "Goldbach grid - drawn, NOT a scored source"
+showGB = input.bool(true, "Show the Goldbach grid", group=gGB)
+gbJT = input.bool(true, "JT breaker 0.35 / 0.65", group=gGB)
+gbLadder = input.bool(true, "Goldbach levels", group=gGB)
+gGL = "Goldbach levels customization"
+gl0 = input.bool(true, "-0.111  Ext", group=gGL, inline="l0")
+gc0 = input.color(#2962ff, "", group=gGL, inline="l0")
+gl1 = input.bool(true, "0  Low", group=gGL, inline="l1")
+gc1 = input.color(#f23645, "", group=gGL, inline="l1")
+gl2 = input.bool(false, "0.03  RB", group=gGL, inline="l2")
+gc2 = input.color(#5d6673, "", group=gGL, inline="l2")
+gl3 = input.bool(false, "0.11  OB", group=gGL, inline="l3")
+gc3 = input.color(#5d6673, "", group=gGL, inline="l3")
+gl4 = input.bool(false, "0.17  FVG", group=gGL, inline="l4")
+gc4 = input.color(#5d6673, "", group=gGL, inline="l4")
+gl5 = input.bool(true, "0.29  LV", group=gGL, inline="l5")
+gc5 = input.color(#000000, "", group=gGL, inline="l5")
+gl6 = input.bool(true, "0.41  BR", group=gGL, inline="l6")
+gc6 = input.color(#000000, "", group=gGL, inline="l6")
+gl7 = input.bool(false, "0.47  MB", group=gGL, inline="l7")
+gc7 = input.color(#5d6673, "", group=gGL, inline="l7")
+gl8 = input.bool(true, "0.5  EQ", group=gGL, inline="l8")
+gc8 = input.color(#2962ff, "", group=gGL, inline="l8")
+gl9 = input.bool(false, "0.53  MB", group=gGL, inline="l9")
+gc9 = input.color(#5d6673, "", group=gGL, inline="l9")
+gl10 = input.bool(true, "0.59  BR", group=gGL, inline="l10")
+gc10 = input.color(#000000, "", group=gGL, inline="l10")
+gl11 = input.bool(true, "0.71  LV", group=gGL, inline="l11")
+gc11 = input.color(#000000, "", group=gGL, inline="l11")
+gl12 = input.bool(false, "0.83  FVG", group=gGL, inline="l12")
+gc12 = input.color(#5d6673, "", group=gGL, inline="l12")
+gl13 = input.bool(false, "0.89  OB", group=gGL, inline="l13")
+gc13 = input.color(#5d6673, "", group=gGL, inline="l13")
+gl14 = input.bool(false, "0.97  RB", group=gGL, inline="l14")
+gc14 = input.color(#5d6673, "", group=gGL, inline="l14")
+gl15 = input.bool(true, "1  High", group=gGL, inline="l15")
+gc15 = input.color(#f23645, "", group=gGL, inline="l15")
+gl16 = input.bool(true, "1.111  Ext", group=gGL, inline="l16")
+gc16 = input.color(#2962ff, "", group=gGL, inline="l16")
+gCE = "CE (consequent encroachment)"
+ce0 = input.bool(true, "CE -0.056", group=gCE)
+ce1 = input.bool(false, "CE 0.015", group=gCE)
+ce2 = input.bool(true, "CE 0.070", group=gCE)
+ce3 = input.bool(true, "CE 0.140", group=gCE)
+ce4 = input.bool(false, "CE 0.230", group=gCE)
+ce5 = input.bool(true, "CE 0.350", group=gCE)
+ce6 = input.bool(false, "CE 0.440", group=gCE)
+ce7 = input.bool(false, "CE 0.485", group=gCE)
+ce8 = input.bool(false, "CE 0.515", group=gCE)
+ce9 = input.bool(false, "CE 0.560", group=gCE)
+ce10 = input.bool(true, "CE 0.650 - the white BR line he trades", group=gCE)
+ce11 = input.bool(false, "CE 0.770", group=gCE)
+ce12 = input.bool(true, "CE 0.860", group=gCE)
+ce13 = input.bool(true, "CE 0.930", group=gCE)
+ce14 = input.bool(false, "CE 0.985", group=gCE)
+ce15 = input.bool(true, "CE 1.055", group=gCE)
+ceCol = input.color(#ffffff, "CE line colour", group=gCE)
+ceTxt = input.color(#1f2328, "CE label text", group=gCE)
+gbPo3 = input.int(729, "PO3 dealing range", options=[3, 9, 27, 81, 243, 729, 2187, 6561], group=gGB)
+gbShift = input.int(-1, "DR Shift", options=[-1, 0, 1], group=gGB)
+gbWidth = input.int(2, "Line width", minval=1, maxval=5, group=gGB)
+gbCEWidth = input.int(2, "CE line width", minval=1, maxval=5, group=gGB)
+gbExt = input.bool(true, "Extensions -0.111 / 1.111", group=gGB)
+gbCE = input.bool(true, "CE midpoint lines", group=gGB)
+gbPremDisc = input.bool(false, "Shade premium / discount vs EQ (half the range)", group=gGB)
+gbZones = input.bool(true, "Zone from each level to its CE", group=gGB)
+gbStats = input.bool(true, "DR / Algo stats box", group=gGB)
+gbTime = input.bool(true, "GB Time - session boundary lines", group=gGB)
+gbExtLeft = input.bool(true, "Extend the grid back over history", group=gGB)
+gbBack = input.int(300, "How many bars back the grid starts", minval=50, maxval=5000, group=gGB)
+gbUp = input.bool(false, "Additional range +1 (above)", group=gGB, inline="ar")
+gbDn = input.bool(false, "-1 (below)", group=gGB, inline="ar")
+
+ext = extendLeft ? extend.both : extend.right
+
+var array<line> _L = array.new_line()
+var array<label> _T = array.new_label()
+var array<box> _X = array.new_box()
+var array<float> _pdF = array.from(0.0150, 0.0700, 0.1400, 0.2300, 0.3500, 0.4400, 0.4850, 0.5150, 0.5600, 0.6500, 0.7700, 0.8600, 0.9300, 0.9850)
+var array<string> _pdC = array.from("Low", "RB", "OB", "FVG", "LV", "BR", "MB", "EQ", "MB", "BR", "LV", "FVG", "OB", "RB")
+if barstate.islast
+    if array.size(_L) > 0
+        for i = 0 to array.size(_L) - 1
+            line.delete(array.get(_L, i))
+        array.clear(_L)
+    if array.size(_T) > 0
+        for i = 0 to array.size(_T) - 1
+            label.delete(array.get(_T, i))
+        array.clear(_T)
+    if array.size(_X) > 0
+        for i = 0 to array.size(_X) - 1
+            box.delete(array.get(_X, i))
+        array.clear(_X)
+
+// The grid is arithmetic on price, so unlike the levels above it is
+// computed live and stays correct without re-exporting.
+// gbShift -1 = the range containing price, matching his panel.
+gbLo = (math.floor(close / gbPo3) + gbShift + 1) * gbPo3
+gbHi = gbLo + gbPo3
+gbEq = gbLo + 0.5 * gbPo3
+gbExt2 = gbExtLeft ? extend.both : extend.right
+gbUpLo = gbLo + gbPo3
+gbDnLo = gbLo - gbPo3
+
+// ---------- Goldbach grid (live, ungraded) ----------
+if barstate.islast and showGB and gbPremDisc
+    array.push(_X, box.new(bar_index - gbBack, gbHi, bar_index, gbEq, border_color=color.new(color.white, 100), bgcolor=color.new(cGB, 94)))
+    array.push(_X, box.new(bar_index - gbBack, gbEq, bar_index, gbLo, border_color=color.new(color.white, 100), bgcolor=color.new(cGB, 97)))
+if barstate.islast and showGB and gbLadder and ce0
+    ceP0 = gbLo + -0.0555 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP0, bar_index, ceP0, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 9, ceP0, "-0.056 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce1
+    ceP1 = gbLo + 0.0150 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP1, bar_index, ceP1, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index, ceP1, "0.015 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce2
+    ceP2 = gbLo + 0.0700 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP2, bar_index, ceP2, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 18, ceP2, "0.07 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce3
+    ceP3 = gbLo + 0.1400 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP3, bar_index, ceP3, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 9, ceP3, "0.14 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce4
+    ceP4 = gbLo + 0.2300 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP4, bar_index, ceP4, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index, ceP4, "0.23 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce5
+    ceP5 = gbLo + 0.3500 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP5, bar_index, ceP5, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 18, ceP5, "0.35 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce6
+    ceP6 = gbLo + 0.4400 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP6, bar_index, ceP6, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 9, ceP6, "0.44 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce7
+    ceP7 = gbLo + 0.4850 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP7, bar_index, ceP7, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index, ceP7, "0.485 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce8
+    ceP8 = gbLo + 0.5150 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP8, bar_index, ceP8, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 18, ceP8, "0.515 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce9
+    ceP9 = gbLo + 0.5600 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP9, bar_index, ceP9, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 9, ceP9, "0.56 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce10
+    ceP10 = gbLo + 0.6500 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP10, bar_index, ceP10, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index, ceP10, "0.65 CE  BR", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce11
+    ceP11 = gbLo + 0.7700 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP11, bar_index, ceP11, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 18, ceP11, "0.77 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce12
+    ceP12 = gbLo + 0.8600 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP12, bar_index, ceP12, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 9, ceP12, "0.86 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce13
+    ceP13 = gbLo + 0.9300 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP13, bar_index, ceP13, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index, ceP13, "0.93 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce14
+    ceP14 = gbLo + 0.9850 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP14, bar_index, ceP14, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 18, ceP14, "0.985 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and ce15
+    ceP15 = gbLo + 1.0555 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, ceP15, bar_index, ceP15, xloc.bar_index, gbExt2, ceCol, line.style_solid, gbCEWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 9, ceP15, "1.055 CE", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, ceTxt, size.tiny))
+if barstate.islast and showGB and gbLadder and gl0
+    gbP0 = gbLo + -0.1110 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP0, bar_index, gbP0, xloc.bar_index, gbExt2, gc0, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index, gbP0, "-0.111 Ext", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc0, size.tiny))
+if barstate.islast and showGB and gbLadder and gl1
+    gbP1 = gbLo + 0.0000 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP1, bar_index, gbP1, xloc.bar_index, gbExt2, gc1, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 18, gbP1, "0 Low", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc1, size.tiny))
+if barstate.islast and showGB and gbLadder and gl2
+    gbP2 = gbLo + 0.0300 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP2, bar_index, gbP2, xloc.bar_index, gbExt2, gc2, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 9, gbP2, "0.03 RB", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc2, size.tiny))
+if barstate.islast and showGB and gbLadder and gl3
+    gbP3 = gbLo + 0.1100 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP3, bar_index, gbP3, xloc.bar_index, gbExt2, gc3, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index, gbP3, "0.11 OB", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc3, size.tiny))
+if barstate.islast and showGB and gbLadder and gl4
+    gbP4 = gbLo + 0.1700 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP4, bar_index, gbP4, xloc.bar_index, gbExt2, gc4, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 18, gbP4, "0.17 FVG", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc4, size.tiny))
+if barstate.islast and showGB and gbLadder and gl5
+    gbP5 = gbLo + 0.2900 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP5, bar_index, gbP5, xloc.bar_index, gbExt2, gc5, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 9, gbP5, "0.29 LV", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc5, size.tiny))
+if barstate.islast and showGB and gbLadder and gl6
+    gbP6 = gbLo + 0.4100 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP6, bar_index, gbP6, xloc.bar_index, gbExt2, gc6, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index, gbP6, "0.41 BR", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc6, size.tiny))
+if barstate.islast and showGB and gbLadder and gl7
+    gbP7 = gbLo + 0.4700 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP7, bar_index, gbP7, xloc.bar_index, gbExt2, gc7, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 18, gbP7, "0.47 MB", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc7, size.tiny))
+if barstate.islast and showGB and gbLadder and gl8
+    gbP8 = gbLo + 0.5000 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP8, bar_index, gbP8, xloc.bar_index, gbExt2, gc8, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 9, gbP8, "0.5 EQ", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc8, size.tiny))
+if barstate.islast and showGB and gbLadder and gl9
+    gbP9 = gbLo + 0.5300 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP9, bar_index, gbP9, xloc.bar_index, gbExt2, gc9, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index, gbP9, "0.53 MB", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc9, size.tiny))
+if barstate.islast and showGB and gbLadder and gl10
+    gbP10 = gbLo + 0.5900 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP10, bar_index, gbP10, xloc.bar_index, gbExt2, gc10, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 18, gbP10, "0.59 BR", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc10, size.tiny))
+if barstate.islast and showGB and gbLadder and gl11
+    gbP11 = gbLo + 0.7100 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP11, bar_index, gbP11, xloc.bar_index, gbExt2, gc11, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 9, gbP11, "0.71 LV", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc11, size.tiny))
+if barstate.islast and showGB and gbLadder and gl12
+    gbP12 = gbLo + 0.8300 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP12, bar_index, gbP12, xloc.bar_index, gbExt2, gc12, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index, gbP12, "0.83 FVG", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc12, size.tiny))
+if barstate.islast and showGB and gbLadder and gl13
+    gbP13 = gbLo + 0.8900 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP13, bar_index, gbP13, xloc.bar_index, gbExt2, gc13, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 18, gbP13, "0.89 OB", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc13, size.tiny))
+if barstate.islast and showGB and gbLadder and gl14
+    gbP14 = gbLo + 0.9700 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP14, bar_index, gbP14, xloc.bar_index, gbExt2, gc14, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 9, gbP14, "0.97 RB", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc14, size.tiny))
+if barstate.islast and showGB and gbLadder and gl15
+    gbP15 = gbLo + 1.0000 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP15, bar_index, gbP15, xloc.bar_index, gbExt2, gc15, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index, gbP15, "1 High", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc15, size.tiny))
+if barstate.islast and showGB and gbLadder and gl16 and gbExt
+    gbP16 = gbLo + 1.1110 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, gbP16, bar_index, gbP16, xloc.bar_index, gbExt2, gc16, line.style_solid, gbWidth))
+    if showLabels
+        array.push(_T, label.new(bar_index + 18, gbP16, "1.111 Ext", xloc.bar_index, yloc.price, color.new(color.white, 25), label.style_label_left, gc16, size.tiny))
+if barstate.islast and showGB and gbLadder and gbZones and gl0
+    gzA0 = gbLo + -0.1110 * gbPo3
+    gzB0 = gbLo + -0.0555 * gbPo3
+    array.push(_X, box.new(bar_index - gbBack, math.max(gzA0, gzB0), bar_index, math.min(gzA0, gzB0), border_color=color.new(gc0, 70), border_width=1, bgcolor=color.new(gc0, 88), extend=gbExt2))
+if barstate.islast and showGB and gbLadder and gbZones and gl1
+    gzA1 = gbLo + 0.0000 * gbPo3
+    gzB1 = gbLo + -0.0555 * gbPo3
+    array.push(_X, box.new(bar_index - gbBack, math.max(gzA1, gzB1), bar_index, math.min(gzA1, gzB1), border_color=color.new(gc1, 70), border_width=1, bgcolor=color.new(gc1, 88), extend=gbExt2))
+if barstate.islast and showGB and gbLadder and gbZones and gl5
+    gzA2 = gbLo + 0.2900 * gbPo3
+    gzB2 = gbLo + 0.3500 * gbPo3
+    array.push(_X, box.new(bar_index - gbBack, math.max(gzA2, gzB2), bar_index, math.min(gzA2, gzB2), border_color=color.new(gc5, 70), border_width=1, bgcolor=color.new(gc5, 88), extend=gbExt2))
+if barstate.islast and showGB and gbLadder and gbZones and gl6
+    gzA3 = gbLo + 0.4100 * gbPo3
+    gzB3 = gbLo + 0.3500 * gbPo3
+    array.push(_X, box.new(bar_index - gbBack, math.max(gzA3, gzB3), bar_index, math.min(gzA3, gzB3), border_color=color.new(gc6, 70), border_width=1, bgcolor=color.new(gc6, 88), extend=gbExt2))
+if barstate.islast and showGB and gbLadder and gbZones and gl10
+    gzA4 = gbLo + 0.5900 * gbPo3
+    gzB4 = gbLo + 0.6500 * gbPo3
+    array.push(_X, box.new(bar_index - gbBack, math.max(gzA4, gzB4), bar_index, math.min(gzA4, gzB4), border_color=color.new(gc10, 70), border_width=1, bgcolor=color.new(gc10, 88), extend=gbExt2))
+if barstate.islast and showGB and gbLadder and gbZones and gl11
+    gzA5 = gbLo + 0.7100 * gbPo3
+    gzB5 = gbLo + 0.6500 * gbPo3
+    array.push(_X, box.new(bar_index - gbBack, math.max(gzA5, gzB5), bar_index, math.min(gzA5, gzB5), border_color=color.new(gc11, 70), border_width=1, bgcolor=color.new(gc11, 88), extend=gbExt2))
+if barstate.islast and showGB and gbLadder and gbZones and gl15
+    gzA6 = gbLo + 1.0000 * gbPo3
+    gzB6 = gbLo + 1.0555 * gbPo3
+    array.push(_X, box.new(bar_index - gbBack, math.max(gzA6, gzB6), bar_index, math.min(gzA6, gzB6), border_color=color.new(gc15, 70), border_width=1, bgcolor=color.new(gc15, 88), extend=gbExt2))
+if barstate.islast and showGB and gbLadder and gbZones and gl16
+    gzA7 = gbLo + 1.1110 * gbPo3
+    gzB7 = gbLo + 1.0555 * gbPo3
+    array.push(_X, box.new(bar_index - gbBack, math.max(gzA7, gzB7), bar_index, math.min(gzA7, gzB7), border_color=color.new(gc16, 70), border_width=1, bgcolor=color.new(gc16, 88), extend=gbExt2))
+if barstate.islast and showGB and gbLadder and gbUp and gl0
+    nUp0 = gbUpLo + -0.1110 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nUp0, bar_index, nUp0, xloc.bar_index, gbExt2, color.new(gc0, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nUp0, "+1 -0.111 Ext", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc0, size.tiny))
+if barstate.islast and showGB and gbLadder and gbUp and gl1
+    nUp1 = gbUpLo + 0.0000 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nUp1, bar_index, nUp1, xloc.bar_index, gbExt2, color.new(gc1, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nUp1, "+1 0 Low", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc1, size.tiny))
+if barstate.islast and showGB and gbLadder and gbUp and gl5
+    nUp5 = gbUpLo + 0.2900 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nUp5, bar_index, nUp5, xloc.bar_index, gbExt2, color.new(gc5, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nUp5, "+1 0.29 LV", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc5, size.tiny))
+if barstate.islast and showGB and gbLadder and gbUp and gl6
+    nUp6 = gbUpLo + 0.4100 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nUp6, bar_index, nUp6, xloc.bar_index, gbExt2, color.new(gc6, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nUp6, "+1 0.41 BR", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc6, size.tiny))
+if barstate.islast and showGB and gbLadder and gbUp and gl8
+    nUp8 = gbUpLo + 0.5000 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nUp8, bar_index, nUp8, xloc.bar_index, gbExt2, color.new(gc8, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nUp8, "+1 0.5 EQ", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc8, size.tiny))
+if barstate.islast and showGB and gbLadder and gbUp and gl10
+    nUp10 = gbUpLo + 0.5900 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nUp10, bar_index, nUp10, xloc.bar_index, gbExt2, color.new(gc10, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nUp10, "+1 0.59 BR", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc10, size.tiny))
+if barstate.islast and showGB and gbLadder and gbUp and gl11
+    nUp11 = gbUpLo + 0.7100 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nUp11, bar_index, nUp11, xloc.bar_index, gbExt2, color.new(gc11, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nUp11, "+1 0.71 LV", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc11, size.tiny))
+if barstate.islast and showGB and gbLadder and gbUp and gl15
+    nUp15 = gbUpLo + 1.0000 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nUp15, bar_index, nUp15, xloc.bar_index, gbExt2, color.new(gc15, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nUp15, "+1 1 High", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc15, size.tiny))
+if barstate.islast and showGB and gbLadder and gbDn and gl0
+    nDn0 = gbDnLo + -0.1110 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nDn0, bar_index, nDn0, xloc.bar_index, gbExt2, color.new(gc0, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nDn0, "-1 -0.111 Ext", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc0, size.tiny))
+if barstate.islast and showGB and gbLadder and gbDn and gl1
+    nDn1 = gbDnLo + 0.0000 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nDn1, bar_index, nDn1, xloc.bar_index, gbExt2, color.new(gc1, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nDn1, "-1 0 Low", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc1, size.tiny))
+if barstate.islast and showGB and gbLadder and gbDn and gl5
+    nDn5 = gbDnLo + 0.2900 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nDn5, bar_index, nDn5, xloc.bar_index, gbExt2, color.new(gc5, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nDn5, "-1 0.29 LV", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc5, size.tiny))
+if barstate.islast and showGB and gbLadder and gbDn and gl6
+    nDn6 = gbDnLo + 0.4100 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nDn6, bar_index, nDn6, xloc.bar_index, gbExt2, color.new(gc6, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nDn6, "-1 0.41 BR", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc6, size.tiny))
+if barstate.islast and showGB and gbLadder and gbDn and gl8
+    nDn8 = gbDnLo + 0.5000 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nDn8, bar_index, nDn8, xloc.bar_index, gbExt2, color.new(gc8, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nDn8, "-1 0.5 EQ", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc8, size.tiny))
+if barstate.islast and showGB and gbLadder and gbDn and gl10
+    nDn10 = gbDnLo + 0.5900 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nDn10, bar_index, nDn10, xloc.bar_index, gbExt2, color.new(gc10, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nDn10, "-1 0.59 BR", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc10, size.tiny))
+if barstate.islast and showGB and gbLadder and gbDn and gl11
+    nDn11 = gbDnLo + 0.7100 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nDn11, bar_index, nDn11, xloc.bar_index, gbExt2, color.new(gc11, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nDn11, "-1 0.71 LV", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc11, size.tiny))
+if barstate.islast and showGB and gbLadder and gbDn and gl15
+    nDn15 = gbDnLo + 1.0000 * gbPo3
+    array.push(_L, line.new(bar_index - gbBack, nDn15, bar_index, nDn15, xloc.bar_index, gbExt2, color.new(gc15, 45), line.style_solid, 1))
+    if showLabels
+        array.push(_T, label.new(bar_index, nDn15, "-1 1 High", xloc.bar_index, yloc.price, color.new(color.white, 40), label.style_label_left, gc15, size.tiny))
+if barstate.islast and showGB and gbTime
+    for i = 0 to 2
+        gbT = timestamp("America/New_York", year, month, dayofmonth, i == 0 ? 18 : i == 1 ? 3 : 9, i == 2 ? 30 : 0)
+        array.push(_L, line.new(gbT, low, gbT, high, xloc.bar_time, extend.both, color.new(cGB, 75), line.style_dotted, 1))
+if barstate.islast and showGB and gbStats
+    var table gbBox = table.new(position.top_right, 4, 10, border_width=1)
+    table.cell(gbBox, 0, 0, "PO3", text_color=color.white, bgcolor=cGB, text_size=size.tiny)
+    table.cell(gbBox, 1, 0, "Low", text_color=color.white, bgcolor=cGB, text_size=size.tiny)
+    table.cell(gbBox, 2, 0, "High", text_color=color.white, bgcolor=cGB, text_size=size.tiny)
+    table.cell(gbBox, 3, 0, "PD", text_color=color.white, bgcolor=cGB, text_size=size.tiny)
+    sLo3 = math.floor(close / 3) * 3
+    sSel3 = gbPo3 == 3
+    table.cell(gbBox, 0, 1, "3", text_color=sSel3 ? color.white : cGB, bgcolor=sSel3 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 1, 1, str.tostring(sLo3, "#.##"), text_color=sSel3 ? color.white : cGB, bgcolor=sSel3 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 2, 1, str.tostring(sLo3 + 3, "#.##"), text_color=sSel3 ? color.white : cGB, bgcolor=sSel3 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    pd3 = (close - sLo3) / 3
+    pdc3 = "H"
+    for k = 0 to array.size(_pdF) - 1
+        if pd3 < array.get(_pdF, k)
+            pdc3 := array.get(_pdC, k)
+            break
+    table.cell(gbBox, 3, 1, pdc3, text_color=sSel3 ? color.white : cGB, bgcolor=sSel3 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    sLo9 = math.floor(close / 9) * 9
+    sSel9 = gbPo3 == 9
+    table.cell(gbBox, 0, 2, "9", text_color=sSel9 ? color.white : cGB, bgcolor=sSel9 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 1, 2, str.tostring(sLo9, "#.##"), text_color=sSel9 ? color.white : cGB, bgcolor=sSel9 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 2, 2, str.tostring(sLo9 + 9, "#.##"), text_color=sSel9 ? color.white : cGB, bgcolor=sSel9 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    pd9 = (close - sLo9) / 9
+    pdc9 = "H"
+    for k = 0 to array.size(_pdF) - 1
+        if pd9 < array.get(_pdF, k)
+            pdc9 := array.get(_pdC, k)
+            break
+    table.cell(gbBox, 3, 2, pdc9, text_color=sSel9 ? color.white : cGB, bgcolor=sSel9 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    sLo27 = math.floor(close / 27) * 27
+    sSel27 = gbPo3 == 27
+    table.cell(gbBox, 0, 3, "27", text_color=sSel27 ? color.white : cGB, bgcolor=sSel27 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 1, 3, str.tostring(sLo27, "#.##"), text_color=sSel27 ? color.white : cGB, bgcolor=sSel27 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 2, 3, str.tostring(sLo27 + 27, "#.##"), text_color=sSel27 ? color.white : cGB, bgcolor=sSel27 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    pd27 = (close - sLo27) / 27
+    pdc27 = "H"
+    for k = 0 to array.size(_pdF) - 1
+        if pd27 < array.get(_pdF, k)
+            pdc27 := array.get(_pdC, k)
+            break
+    table.cell(gbBox, 3, 3, pdc27, text_color=sSel27 ? color.white : cGB, bgcolor=sSel27 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    sLo81 = math.floor(close / 81) * 81
+    sSel81 = gbPo3 == 81
+    table.cell(gbBox, 0, 4, "81", text_color=sSel81 ? color.white : cGB, bgcolor=sSel81 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 1, 4, str.tostring(sLo81, "#.##"), text_color=sSel81 ? color.white : cGB, bgcolor=sSel81 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 2, 4, str.tostring(sLo81 + 81, "#.##"), text_color=sSel81 ? color.white : cGB, bgcolor=sSel81 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    pd81 = (close - sLo81) / 81
+    pdc81 = "H"
+    for k = 0 to array.size(_pdF) - 1
+        if pd81 < array.get(_pdF, k)
+            pdc81 := array.get(_pdC, k)
+            break
+    table.cell(gbBox, 3, 4, pdc81, text_color=sSel81 ? color.white : cGB, bgcolor=sSel81 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    sLo243 = math.floor(close / 243) * 243
+    sSel243 = gbPo3 == 243
+    table.cell(gbBox, 0, 5, "243", text_color=sSel243 ? color.white : cGB, bgcolor=sSel243 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 1, 5, str.tostring(sLo243, "#.##"), text_color=sSel243 ? color.white : cGB, bgcolor=sSel243 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 2, 5, str.tostring(sLo243 + 243, "#.##"), text_color=sSel243 ? color.white : cGB, bgcolor=sSel243 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    pd243 = (close - sLo243) / 243
+    pdc243 = "H"
+    for k = 0 to array.size(_pdF) - 1
+        if pd243 < array.get(_pdF, k)
+            pdc243 := array.get(_pdC, k)
+            break
+    table.cell(gbBox, 3, 5, pdc243, text_color=sSel243 ? color.white : cGB, bgcolor=sSel243 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    sLo729 = math.floor(close / 729) * 729
+    sSel729 = gbPo3 == 729
+    table.cell(gbBox, 0, 6, "729", text_color=sSel729 ? color.white : cGB, bgcolor=sSel729 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 1, 6, str.tostring(sLo729, "#.##"), text_color=sSel729 ? color.white : cGB, bgcolor=sSel729 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 2, 6, str.tostring(sLo729 + 729, "#.##"), text_color=sSel729 ? color.white : cGB, bgcolor=sSel729 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    pd729 = (close - sLo729) / 729
+    pdc729 = "H"
+    for k = 0 to array.size(_pdF) - 1
+        if pd729 < array.get(_pdF, k)
+            pdc729 := array.get(_pdC, k)
+            break
+    table.cell(gbBox, 3, 6, pdc729, text_color=sSel729 ? color.white : cGB, bgcolor=sSel729 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    sLo2187 = math.floor(close / 2187) * 2187
+    sSel2187 = gbPo3 == 2187
+    table.cell(gbBox, 0, 7, "2187", text_color=sSel2187 ? color.white : cGB, bgcolor=sSel2187 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 1, 7, str.tostring(sLo2187, "#.##"), text_color=sSel2187 ? color.white : cGB, bgcolor=sSel2187 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 2, 7, str.tostring(sLo2187 + 2187, "#.##"), text_color=sSel2187 ? color.white : cGB, bgcolor=sSel2187 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    pd2187 = (close - sLo2187) / 2187
+    pdc2187 = "H"
+    for k = 0 to array.size(_pdF) - 1
+        if pd2187 < array.get(_pdF, k)
+            pdc2187 := array.get(_pdC, k)
+            break
+    table.cell(gbBox, 3, 7, pdc2187, text_color=sSel2187 ? color.white : cGB, bgcolor=sSel2187 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    sLo6561 = math.floor(close / 6561) * 6561
+    sSel6561 = gbPo3 == 6561
+    table.cell(gbBox, 0, 8, "6561", text_color=sSel6561 ? color.white : cGB, bgcolor=sSel6561 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 1, 8, str.tostring(sLo6561, "#.##"), text_color=sSel6561 ? color.white : cGB, bgcolor=sSel6561 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 2, 8, str.tostring(sLo6561 + 6561, "#.##"), text_color=sSel6561 ? color.white : cGB, bgcolor=sSel6561 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    pd6561 = (close - sLo6561) / 6561
+    pdc6561 = "H"
+    for k = 0 to array.size(_pdF) - 1
+        if pd6561 < array.get(_pdF, k)
+            pdc6561 := array.get(_pdC, k)
+            break
+    table.cell(gbBox, 3, 8, pdc6561, text_color=sSel6561 ? color.white : cGB, bgcolor=sSel6561 ? cGB : color.new(color.white, 15), text_size=size.tiny)
+    table.cell(gbBox, 0, 9, "grid: not a scored source", text_color=cGB, bgcolor=color.new(color.white, 15), text_size=size.tiny)
+
+// ---------- S+ (1) ----------
+if barstate.islast and showSplus and (maxDist == 0 or math.abs(close - 29742.62) <= maxDist)
+    if zoneGrades != "None"
+        array.push(_X, box.new(bar_index - 300, 29742.62, bar_index, 29725.00, border_color=color.new(cSplus, 55), border_width=1, bgcolor=color.new(cSplus, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 29742.62, bar_index, 29742.62, xloc.bar_index, ext, color.new(cSplus, 0), line.style_solid, 4))
+    if showLabels
+        txt = labelDetail == "Full" ? "[S+ 4 - 83%] Call Wall (OI) + London Low + 1D Min + BL 4 + Call Resistance 0DTE + Gamma Wall 0DTE  (18pt zone)" : labelDetail == "Short" ? "S+ 83% Call Wall (OI) +5 more  (18pt zone)" : "S+ 83%"
+        array.push(_T, label.new(bar_index - labelGap, 29742.62, txt, xloc.bar_index, yloc.price, color.new(cSplus, plateTransp), label.style_label_right, color.white, size.small))
+
+// ---------- A (5) ----------
+if barstate.islast and showA and (maxDist == 0 or math.abs(close - 30400.00) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30400.00, bar_index, 30400.00, xloc.bar_index, ext, color.new(cA, 10), line.style_solid, 2))
+    if showLabels
+        txt = labelDetail == "Full" ? "[A 2 - 60%] GEX 3 + BL 1  (1pt zone)" : labelDetail == "Short" ? "A 60% GEX 3 +1 more  (1pt zone)" : "A 60%"
+        array.push(_T, label.new(bar_index - labelGap - 11, 30400.00, txt, xloc.bar_index, yloc.price, color.new(cA, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showA and (maxDist == 0 or math.abs(close - 30121.25) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30121.25, bar_index, 30121.25, xloc.bar_index, ext, color.new(cA, 10), line.style_solid, 2))
+    if showLabels
+        txt = labelDetail == "Full" ? "[A 2 - 60%] Overnight High + Asia High" : labelDetail == "Short" ? "A 60% Overnight High +1 more" : "A 60%"
+        array.push(_T, label.new(bar_index - labelGap, 30121.25, txt, xloc.bar_index, yloc.price, color.new(cA, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showA and (maxDist == 0 or math.abs(close - 30080.00) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30080.00, bar_index, 30080.00, xloc.bar_index, ext, color.new(cA, 10), line.style_solid, 2))
+    if showLabels
+        txt = labelDetail == "Full" ? "[A 2 - 60%] HVL 0DTE + BL 10" : labelDetail == "Short" ? "A 60% HVL 0DTE +1 more" : "A 60%"
+        array.push(_T, label.new(bar_index - labelGap - 22, 30080.00, txt, xloc.bar_index, yloc.price, color.new(cA, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showA and (maxDist == 0 or math.abs(close - 29896.50) <= maxDist)
+    if zoneGrades == "All grades"
+        array.push(_X, box.new(bar_index - 300, 29896.50, bar_index, 29893.50, border_color=color.new(cA, 55), border_width=1, bgcolor=color.new(cA, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 29896.50, bar_index, 29896.50, xloc.bar_index, ext, color.new(cA, 10), line.style_solid, 2))
+    if showLabels
+        txt = labelDetail == "Full" ? "[A 2 - 60%] London High + Void A 12H/1B top  (3pt zone)" : labelDetail == "Short" ? "A 60% London High +1 more  (3pt zone)" : "A 60%"
+        array.push(_T, label.new(bar_index - labelGap, 29896.50, txt, xloc.bar_index, yloc.price, color.new(cA, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showA and (maxDist == 0 or math.abs(close - 29850.00) <= maxDist)
+    if zoneGrades == "All grades"
+        array.push(_X, box.new(bar_index - 300, 29853.00, bar_index, 29850.00, border_color=color.new(cA, 55), border_width=1, bgcolor=color.new(cA, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 29850.00, bar_index, 29850.00, xloc.bar_index, ext, color.new(cA, 10), line.style_solid, 2))
+    if showLabels
+        txt = labelDetail == "Full" ? "[A 2 - 60%] GEX 5 + Asia Low  (3pt zone)" : labelDetail == "Short" ? "A 60% GEX 5 +1 more  (3pt zone)" : "A 60%"
+        array.push(_T, label.new(bar_index - labelGap - 11, 29850.00, txt, xloc.bar_index, yloc.price, color.new(cA, plateTransp), label.style_label_right, color.white, size.small))
+
+// ---------- B (27) ----------
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 31707.10) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 31707.10, bar_index, 31707.10, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] BL 6" : labelDetail == "Short" ? "B 52% BL 6" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 31707.10, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30700.00) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30700.00, bar_index, 30700.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 9" : labelDetail == "Short" ? "B 52% GEX 9" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 30700.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30596.24) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30596.24, bar_index, 30596.24, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] BL 2" : labelDetail == "Short" ? "B 52% BL 2" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 30596.24, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30505.94) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30505.94, bar_index, 30505.94, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] BL 7" : labelDetail == "Short" ? "B 52% BL 7" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 30505.94, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30422.49) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30422.49, bar_index, 30422.49, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] 1D Max" : labelDetail == "Short" ? "B 52% 1D Max" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 30422.49, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30343.00) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30343.00, bar_index, 30343.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] Prior Day High" : labelDetail == "Short" ? "B 52% Prior Day High" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 30343.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30300.00) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30300.00, bar_index, 30300.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 2" : labelDetail == "Short" ? "B 52% GEX 2" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 30300.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30285.99) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30285.99, bar_index, 30285.99, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] BL 3" : labelDetail == "Short" ? "B 52% BL 3" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap - 11, 30285.99, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30100.00) <= maxDist)
+    if zoneGrades == "All grades"
+        array.push(_X, box.new(bar_index - 300, 30100.00, bar_index, 30092.62, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 30100.00, bar_index, 30100.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 4 + GEX strike  (7pt zone)" : labelDetail == "Short" ? "B 52% GEX 4 +1 more  (7pt zone)" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap - 11, 30100.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30054.50) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30054.50, bar_index, 30054.50, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] Prior Day Low" : labelDetail == "Short" ? "B 52% Prior Day Low" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 30054.50, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 30000.00) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 30000.00, bar_index, 30000.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] Call Resistance" : labelDetail == "Short" ? "B 52% Call Resistance" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 30000.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29870.00) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29870.00, bar_index, 29870.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] Void A 12H/1B bot" : labelDetail == "Short" ? "B 52% Void A 12H/1B bot" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29870.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29800.00) <= maxDist)
+    if zoneGrades == "All grades"
+        array.push(_X, box.new(bar_index - 300, 29800.00, bar_index, 29790.00, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 29800.00, bar_index, 29800.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 1 + Call Wall (vol) + HVL  (10pt zone)" : labelDetail == "Short" ? "B 52% GEX 1 +2 more  (10pt zone)" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29800.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29700.00) <= maxDist)
+    if zoneGrades == "All grades"
+        array.push(_X, box.new(bar_index - 300, 29700.00, bar_index, 29692.62, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 29700.00, bar_index, 29700.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 8 + GEX strike  (7pt zone)" : labelDetail == "Short" ? "B 52% GEX 8 +1 more  (7pt zone)" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29700.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29678.00) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29678.00, bar_index, 29678.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] Overnight Low" : labelDetail == "Short" ? "B 52% Overnight Low" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap - 11, 29678.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29650.00) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29650.00, bar_index, 29650.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 10" : labelDetail == "Short" ? "B 52% GEX 10" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29650.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29605.04) <= maxDist)
+    if zoneGrades == "All grades"
+        array.push(_X, box.new(bar_index - 300, 29605.04, bar_index, 29592.62, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 29605.04, bar_index, 29605.04, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] Gamma Flip + GEX 6 + Put Wall (vol)  (12pt zone)" : labelDetail == "Short" ? "B 52% Gamma Flip +2 more  (12pt zone)" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29605.04, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29550.00) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29550.00, bar_index, 29550.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX 7" : labelDetail == "Short" ? "B 52% GEX 7" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29550.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29500.00) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29500.00, bar_index, 29500.00, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] Put Support + Put Support 0DTE" : labelDetail == "Short" ? "B 52% Put Support +1 more" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29500.00, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29468.79) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29468.79, bar_index, 29468.79, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] BL 9" : labelDetail == "Short" ? "B 52% BL 9" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29468.79, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29442.62) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29442.62, bar_index, 29442.62, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX strike" : labelDetail == "Short" ? "B 52% GEX strike" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29442.62, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29192.62) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29192.62, bar_index, 29192.62, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] Put Wall (OI)" : labelDetail == "Short" ? "B 52% Put Wall (OI)" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29192.62, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29167.62) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29167.62, bar_index, 29167.62, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX strike" : labelDetail == "Short" ? "B 52% GEX strike" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29167.62, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29092.62) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29092.62, bar_index, 29092.62, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] GEX strike" : labelDetail == "Short" ? "B 52% GEX strike" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29092.62, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29068.88) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29068.88, bar_index, 29068.88, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] BL 5" : labelDetail == "Short" ? "B 52% BL 5" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap - 11, 29068.88, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 29032.65) <= maxDist)
+    array.push(_L, line.new(bar_index - 300, 29032.65, bar_index, 29032.65, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] BL 8" : labelDetail == "Short" ? "B 52% BL 8" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 29032.65, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+if barstate.islast and showB and (maxDist == 0 or math.abs(close - 27788.50) <= maxDist)
+    if zoneGrades == "All grades"
+        array.push(_X, box.new(bar_index - 300, 27788.50, bar_index, 27784.00, border_color=color.new(cB, 55), border_width=1, bgcolor=color.new(cB, 82), extend=ext))
+    array.push(_L, line.new(bar_index - 300, 27788.50, bar_index, 27788.50, xloc.bar_index, ext, color.new(cB, 45), line.style_dotted, 1))
+    if showLabels
+        txt = labelDetail == "Full" ? "[B 1 - 52%] Void A 9H/3B top + Void A 9H/3B bot  (4pt zone)" : labelDetail == "Short" ? "B 52% Void A 9H/3B top +1 more  (4pt zone)" : "B 52%"
+        array.push(_T, label.new(bar_index - labelGap, 27788.50, txt, xloc.bar_index, yloc.price, color.new(cB, plateTransp), label.style_label_right, color.white, size.small))
+
+// END OF SCRIPT - 718 lines. If your copy stops before this line it was cut off in transit - ask for the file again.
