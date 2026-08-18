@@ -13,8 +13,10 @@ const path = require('path');
 const cboe = require('./cboe.js');
 const sessions = require('./sessions.js');
 const annotations = require('./annotations.js');
+const basisPicker = require('./basis.js');
 
 const OUT_DIR = path.join(__dirname, 'levels');
+const BASIS_STATE = path.join(__dirname, 'state', 'basis.json');
 const SHELVES = 6;          // gamma shelves drawn beyond the two walls
 const BASIS_MAX = cboe.BASIS_MAX;
 
@@ -99,7 +101,20 @@ async function main() {
   const g = await cboe.fetchGex('_NDX');
   if (!g.ok) { console.error(`CBOE: ${g.error}`); process.exit(1); }
 
-  const basis = await cboe.nqBasis(g.data.spot);
+  // CBOE serves the prior session's close outside cash hours, so a basis taken
+  // then absorbs the whole overnight move - it shipped a 395-point error on
+  // 2026-08-18. Only a measurement taken while NDX is genuinely trading is
+  // believed; otherwise the last real one is carried forward. See basis.js.
+  let carried = null;
+  try { carried = JSON.parse(fs.readFileSync(BASIS_STATE, 'utf8')); } catch { /* none yet */ }
+
+  const measured = await cboe.nqBasis(g.data.spot);
+  const chosen = basisPicker.choose({ measured, carried, now: new Date() });
+  const basis = chosen.basis;
+  console.log(chosen.source === 'measured'
+    ? `basis ${basis} measured live`
+    : `basis ${basis} carried from ${Math.round(chosen.ageHours)}h ago `
+      + `(this run measured ${measured}, outside cash hours or implausible)`);
 
   let sess = {};
   try {
@@ -114,7 +129,7 @@ async function main() {
   const { levels, meta } = buildLevels({ gex: g.data, basis, sess });
   if (!levels.length) { console.error('No levels built - writing nothing'); process.exit(1); }
 
-  console.log(`${levels.length} levels | basis ${basis} | NQ ~${meta.nqSpot} | ${meta.regime} gamma`);
+  console.log(`${levels.length} levels | basis ${basis} (${chosen.source}) | NQ ~${meta.nqSpot} | ${meta.regime} gamma`);
   for (const l of levels) console.log(`  ${l.label}`);
   if (dry) { console.log('(dry run - nothing written)'); return; }
 
@@ -128,7 +143,17 @@ async function main() {
   };
   write('NQ-latest.xml', text);
   write(`NQ-${day}.xml`, text);
-  write('latest.json', JSON.stringify({ ...meta, levels }, null, 2));
+  write('latest.json', JSON.stringify({ ...meta, basisSource: chosen.source, levels }, null, 2));
+
+  // Only a measurement taken in cash hours is worth carrying to tomorrow.
+  if (chosen.store) {
+    fs.mkdirSync(path.dirname(BASIS_STATE), { recursive: true });
+    fs.writeFileSync(BASIS_STATE, `${JSON.stringify({
+      basis, measuredAt: new Date().toISOString(),
+      ndxSpot: g.data.spot, nqSpot: meta.nqSpot,
+    }, null, 2)}
+`);
+  }
   console.log(`Wrote levels/NQ-latest.xml for ${day}`);
 }
 
