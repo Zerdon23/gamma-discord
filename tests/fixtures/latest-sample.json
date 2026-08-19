@@ -1,0 +1,23 @@
+{
+  "builtAt": "2026-08-19T12:30:04.001Z",
+  "symbol": "NQ",
+  "basis": 96,
+  "basisSource": "measured",
+  "indexSpot": 29614.0,
+  "nqSpot": 29710.0,
+  "regime": "positive",
+  "netGex": 2399201019.37,
+  "source": "CBOE delayed chain (_NDX) + Yahoo NQ=F",
+  "note": "Context and targets, not triggers. Walls are open-interest based and rebuild overnight.",
+  "levels": [
+    { "type": "CALL_WALL", "price": 29900, "label": "CALL WALL 29,900" },
+    { "type": "PUT_WALL", "price": 29300, "label": "PUT WALL 29,300" },
+    { "type": "FLIP", "price": 29450.76, "label": "GAMMA FLIP 29,451" },
+    { "type": "GAMMA_POS", "price": 30000, "label": "+GAMMA 30,000 · 503m" },
+    { "type": "GAMMA_NEG", "price": 28800, "label": "-GAMMA 28,800 · 276m" },
+    { "type": "PDH", "price": 30287.5, "label": "PRIOR DAY HIGH 30,288" },
+    { "type": "PDL", "price": 30066.5, "label": "PRIOR DAY LOW 30,067" },
+    { "type": "ONH", "price": 30121.25, "label": "OVERNIGHT HIGH 30,121" },
+    { "type": "ONL", "price": 29680.5, "label": "OVERNIGHT LOW 29,681" }
+  ]
+}
