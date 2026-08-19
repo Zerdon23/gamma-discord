@@ -204,3 +204,48 @@ test('a missing token or channel is refused before any request', async () => {
     assert.match(r.error, /not configured/i);
   }
 });
+
+// ------------------------------------------- the TradingView indicator
+
+test('the indicator rides along as a second attachment', async () => {
+  const d = await fakeDiscord();
+  try {
+    const res = await P.post({
+      token: 'tok', channelId: '1', baseUrl: d.base,
+      meta: META, xml: Buffer.from('<levels/>'),
+      pine: '//@version=6\nindicator("x")',
+      morning: true, changed: [], now: new Date('2026-08-19T13:00:00Z'),
+    });
+    assert.strictEqual(res.ok, true);
+    const { body } = d.seen[0];
+    assert.match(body, /name="files\[0\]"/, 'the DeepCharts file must still be sent');
+    assert.match(body, /name="files\[1\]"/, 'the indicator must be sent alongside it');
+    assert.match(body, /Goldbach-Gamma-NQ-2026-08-19\.txt/, 'named with the day');
+    assert.match(body, /@version=6/, 'and carrying the script itself');
+  } finally { await d.close(); }
+});
+
+test('without an indicator the request is exactly what it has always been', async () => {
+  const d = await fakeDiscord();
+  try {
+    await P.post({
+      token: 'tok', channelId: '1', baseUrl: d.base,
+      meta: META, xml: Buffer.from('<x/>'), morning: true, changed: [],
+    });
+    const { body } = d.seen[0];
+    assert.match(body, /name="files\[0\]"/);
+    assert.ok(!body.includes('name="files[1]"'), 'no empty second attachment');
+  } finally { await d.close(); }
+});
+
+test('the morning message tells a first-time reader what to do with it', async () => {
+  const m = P.message({ meta: META, morning: true, changed: [], hasPine: true });
+  const text = JSON.stringify(m);
+  assert.match(text, /Pine Editor/);
+  assert.match(text, /grab the new file/i);
+});
+
+test('it does not promise an indicator that was not attached', () => {
+  const m = P.message({ meta: META, morning: true, changed: [], hasPine: false });
+  assert.ok(!JSON.stringify(m).includes('Pine Editor'));
+});

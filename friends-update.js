@@ -43,6 +43,23 @@ async function run({
   if (!meta || !xml) {
     return { posted: false, reason: 'no levels build to read - nothing to post' };
   }
+
+  /*
+   * The TradingView indicator, read but never required.
+   *
+   * Morning only: it is a once-a-morning artifact, and re-attaching it to a 2pm
+   * "the flip moved" post would invite someone to paste a script whose walls
+   * that same message is telling them have changed.
+   *
+   * An absent file must not turn a levels post into no post - the levels are
+   * what people are waiting for, and the indicator is an extra on top.
+   */
+  let pine = null;
+  if (morning) {
+    try {
+      pine = fs.readFileSync(path.join(root, 'tradingview', 'Goldbach-Gamma-NQ.txt'));
+    } catch { /* not built - post the levels anyway */ }
+  }
   if (!token || !channelId) {
     return { posted: false, reason: 'not configured - no bot token or channel id yet' };
   }
@@ -57,7 +74,7 @@ async function run({
   if (dry) return { posted: false, reason: `would post - ${decision.reason}` };
 
   const res = await P.post({
-    token, channelId, baseUrl, meta, xml, now,
+    token, channelId, baseUrl, meta, xml, pine, now,
     morning, changed: decision.changed,
   });
 

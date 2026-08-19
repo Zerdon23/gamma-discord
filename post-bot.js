@@ -67,7 +67,7 @@ function levelBlock(levels) {
 }
 
 /** The message body. Pure - no clock, no network - so it is testable. */
-function message({ meta, morning, changed }) {
+function message({ meta, morning, changed, hasPine }) {
   const day = String(meta.builtAt || '').slice(0, 10);
   const words = (changed || []).map(plain);
 
@@ -80,11 +80,20 @@ function message({ meta, morning, changed }) {
     : `**${joinWords(words)} moved** since the morning post. `
       + 'Re-import the file below to redraw.';
 
+  // Only when an indicator was actually attached, and only on the morning post.
+  // Describing a file that is not there sends people looking for it.
+  const pineLine = (morning && hasPine)
+    ? '\n\n**On TradingView:** open the Pine Editor, paste the .txt below, '
+      + 'Add to chart. The Goldbach grid draws itself on any symbol. The gamma '
+      + "levels are today's NQ numbers, so grab the new file tomorrow."
+    : '';
+
   return {
     embeds: [{
       title: headline,
       description: `${lead}\n\n${levelBlock(meta.levels)}\n`
-        + 'Save the file, click your chart, press **Page Up**, choose it.',
+        + 'Save the file, click your chart, press **Page Up**, choose it.'
+        + pineLine,
       color: meta.regime === 'positive' ? 0x3ba776 : 0xe05a5a,
       fields: [
         {
@@ -104,7 +113,7 @@ function message({ meta, morning, changed }) {
 }
 
 /** Send it. Returns {ok} or {ok:false, error}; never throws. */
-async function post({ token, channelId, meta, xml, morning, changed,
+async function post({ token, channelId, meta, xml, pine, morning, changed,
                       baseUrl = API, now = new Date() }) {
   if (!token || !channelId) {
     return { ok: false, error: 'not configured - no bot token or channel id' };
@@ -112,9 +121,16 @@ async function post({ token, channelId, meta, xml, morning, changed,
 
   const day = now.toISOString().slice(0, 10);
   const form = new FormData();
-  form.append('payload_json', JSON.stringify(message({ meta, morning, changed })));
+  form.append('payload_json',
+    JSON.stringify(message({ meta, morning, changed, hasPine: Boolean(pine) })));
   form.append('files[0]',
     new Blob([xml], { type: 'application/xml' }), `NQ-Levels-${day}.xml`);
+  // Appended, never interleaved: with no indicator the request is byte-for-byte
+  // what it has always been, and files[0] never moves.
+  if (pine) {
+    form.append('files[1]',
+      new Blob([pine], { type: 'text/plain' }), `Goldbach-Gamma-NQ-${day}.txt`);
+  }
 
   try {
     const res = await fetch(`${baseUrl}/channels/${channelId}/messages`, {

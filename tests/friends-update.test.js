@@ -37,14 +37,22 @@ function workspace(levels = LEVELS) {
 
 async function fakeDiscord(status = 200) {
   let hits = 0;
+  // Keeps the body as well as the count - latin1 so multipart bytes survive
+  // intact, the same way tests/post-bot.test.js reads them.
+  const seen = [];
   const server = http.createServer((req, res) => {
     hits += 1;
-    req.resume();
-    req.on('end', () => { res.writeHead(status, { 'content-type': 'application/json' }); res.end('{}'); });
+    const chunks = [];
+    req.on('data', (c) => chunks.push(c));
+    req.on('end', () => {
+      seen.push({ body: Buffer.concat(chunks).toString('latin1') });
+      res.writeHead(status, { 'content-type': 'application/json' }); res.end('{}');
+    });
   });
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
   return {
     hits: () => hits,
+    seen,
     base: `http://127.0.0.1:${server.address().port}/api/v10`,
     close: () => new Promise((r) => server.close(r)),
   };
@@ -140,4 +148,44 @@ test('an unconfigured bot is a clean no-op, not a crash', async () => {
   assert.strictEqual(r.posted, false);
   assert.match(r.reason, /not configured/i);
   assert.strictEqual(w.hasState(), false);
+});
+
+// ------------------------------------------- the TradingView indicator
+
+test('the morning run attaches the indicator when it has been built', async () => {
+  const w = workspace(); const d = await fakeDiscord();
+  try {
+    fs.mkdirSync(path.join(w.dir, 'tradingview'));
+    fs.writeFileSync(path.join(w.dir, 'tradingview', 'Goldbach-Gamma-NQ.txt'),
+      '//@version=6\nindicator("x")');
+    const r = await run(w, d);
+    assert.strictEqual(r.posted, true);
+    assert.match(d.seen[0].body, /name="files\[1\]"/, 'indicator not attached');
+    assert.match(d.seen[0].body, /@version=6/);
+  } finally { await d.close(); }
+});
+
+test('a missing indicator does not stop the levels going out', async () => {
+  // The indicator is an extra on top of the levels. If build-pine.js has not
+  // run, the crew still get their levels rather than nothing at all.
+  const w = workspace(); const d = await fakeDiscord();
+  try {
+    const r = await run(w, d);
+    assert.strictEqual(r.posted, true);
+    assert.ok(!d.seen[0].body.includes('name="files[1]"'));
+  } finally { await d.close(); }
+});
+
+test('an intraday change post carries no indicator', async () => {
+  // The file is a once-a-morning artifact. Re-attaching this morning's copy to
+  // a 2pm "the flip moved" post invites someone to paste a script whose walls
+  // the same message is telling them have changed.
+  const w = workspace(); const d = await fakeDiscord();
+  try {
+    fs.mkdirSync(path.join(w.dir, 'tradingview'));
+    fs.writeFileSync(path.join(w.dir, 'tradingview', 'Goldbach-Gamma-NQ.txt'), '//@version=6');
+    const r = await run(w, d, { morning: false });
+    assert.strictEqual(r.posted, true);
+    assert.ok(!d.seen[0].body.includes('name="files[1]"'));
+  } finally { await d.close(); }
 });
