@@ -69,10 +69,19 @@ jobs:
         run: node build-levels.js
 
       # ----------------------------------------------------- morning only
+      # The indicator is text built from the levels that just landed. Morning
+      # only, for two reasons: the intraday runs deliberately do not commit
+      # levels/, and a file people paste into TradingView should change once a
+      # day rather than every thirty minutes. It runs here, before the crew
+      # post, because friends-update.js attaches whatever this writes.
+      - name: Build the TradingView indicator
+        if: steps.cadence.outputs.morning == 'true'
+        run: node build-pine.js
+
       - name: Commit the levels file
         if: steps.cadence.outputs.morning == 'true'
         run: |
-          git add levels/
+          git add levels/ tradingview/
           if git diff --cached --quiet; then
             echo "Levels unchanged."
           else
