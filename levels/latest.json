@@ -1,59 +1,59 @@
 {
-  "builtAt": "2026-08-20T15:37:41.794Z",
+  "builtAt": "2026-08-20T15:43:28.489Z",
   "symbol": "NQ",
-  "basis": 87,
-  "indexSpot": 29246.12,
-  "nqSpot": 29333.12,
+  "basis": 66,
+  "indexSpot": 29249.26,
+  "nqSpot": 29315.26,
   "regime": "negative",
-  "netGex": -978674992.8287512,
+  "netGex": -1050235368.5056771,
   "source": "CBOE delayed chain (_NDX) + Yahoo NQ=F",
   "note": "Context and targets, not triggers. Walls are open-interest based and rebuild overnight.",
   "basisSource": "measured",
   "levels": [
     {
       "type": "CALL_WALL",
-      "price": 28637,
-      "label": "CALL WALL 28,637"
+      "price": 28616,
+      "label": "CALL WALL 28,616"
     },
     {
       "type": "PUT_WALL",
-      "price": 29187,
-      "label": "PUT WALL 29,187"
+      "price": 29166,
+      "label": "PUT WALL 29,166"
     },
     {
       "type": "FLIP",
-      "price": 29471.47,
-      "label": "GAMMA FLIP 29,471"
+      "price": 29446.66,
+      "label": "GAMMA FLIP 29,447"
     },
     {
       "type": "GAMMA_POS",
-      "price": 28987,
-      "label": "+GAMMA 28,987 · 523m"
+      "price": 28966,
+      "label": "+GAMMA 28,966 · 524m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 28737,
-      "label": "-GAMMA 28,737 · 357m"
+      "price": 28716,
+      "label": "-GAMMA 28,716 · 357m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 29737,
-      "label": "+GAMMA 29,737 · 307m"
+      "price": 29066,
+      "label": "+GAMMA 29,066 · 296m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 29687,
-      "label": "-GAMMA 29,687 · 287m"
-    },
-    {
-      "type": "GAMMA_POS",
-      "price": 29087,
-      "label": "+GAMMA 29,087 · 284m"
+      "price": 29666,
+      "label": "-GAMMA 29,666 · 291m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 27087,
-      "label": "-GAMMA 27,087 · 271m"
+      "price": 27066,
+      "label": "-GAMMA 27,066 · 271m"
+    },
+    {
+      "type": "GAMMA_NEG",
+      "price": 27566,
+      "label": "-GAMMA 27,566 · 238m"
     },
     {
       "type": "PDH",
