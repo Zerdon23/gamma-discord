@@ -34,6 +34,7 @@ async function run({
   now = new Date(),
   morning = false,
   dry = false,
+  scriptOnly = process.env.FRIENDS_SCRIPT_ONLY === '1',
 } = {}) {
   const statePath = path.join(root, 'state', 'friends.json');
   const meta = readJson(path.join(root, 'levels', 'latest.json'));
@@ -64,6 +65,17 @@ async function run({
     return { posted: false, reason: 'not configured - no bot token or channel id yet' };
   }
 
+  /*
+   * SCRIPT ONLY (FRIENDS_SCRIPT_ONLY=1): this channel gets the indicator and
+   * nothing else, which is the rule set for it after a level dump buried the
+   * download. The indicator is a morning artifact, so an intraday "the flip
+   * moved" run has nothing new to send and must stay quiet rather than post a
+   * message with yesterday's script or no script at all.
+   */
+  if (scriptOnly && !pine) {
+    return { posted: false, reason: 'script only - no indicator built on this run' };
+  }
+
   // A corrupt or absent state file reads as no history, which posts. Being
   // told twice is a nuisance; going quiet because a file got mangled is a bug.
   const decision = N.decide({
@@ -75,7 +87,7 @@ async function run({
 
   const res = await P.post({
     token, channelId, baseUrl, meta, xml, pine, now,
-    morning, changed: decision.changed,
+    morning, changed: decision.changed, scriptOnly,
   });
 
   if (!res.ok) return { posted: false, reason: `post failed - ${res.error}` };

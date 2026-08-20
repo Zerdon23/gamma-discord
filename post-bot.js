@@ -67,8 +67,35 @@ function levelBlock(levels) {
 }
 
 /** The message body. Pure - no clock, no network - so it is testable. */
-function message({ meta, morning, changed, hasPine }) {
+function message({ meta, morning, changed, hasPine, scriptOnly = false }) {
   const day = String(meta.builtAt || '').slice(0, 10);
+
+  /*
+   * SCRIPT ONLY. The friends' server gets the indicator and nothing else.
+   * A forty-level dump was posted there once and it pushed the download out
+   * of view - the file is the thing they came for, so the message says how to
+   * use it and stops. No level list, no gamma fields: both are level data
+   * wearing a different hat, and printing them here re-creates the problem.
+   */
+  if (scriptOnly) {
+    return {
+      embeds: [{
+        title: `Goldbach + Gamma — NQ · ${day}`,
+        description:
+          "**Today's indicator.** Download the .txt below, open TradingView, "
+          + 'Pine Editor, select all, paste over, **Add to chart**.' + '\n\n'
+          + 'The Goldbach grid is maths and draws itself on any symbol. The '
+          + "gamma levels are baked in as today's NQ numbers, so grab the new "
+          + 'file tomorrow rather than leaving this one up.',
+        color: 0x4a9eff,
+        footer: {
+          text: 'CBOE delayed chain · context and targets, not triggers — '
+                + 'these levels do not hold better than a random price',
+        },
+      }],
+    };
+  }
+
   const words = (changed || []).map(plain);
 
   const headline = morning
@@ -114,7 +141,7 @@ function message({ meta, morning, changed, hasPine }) {
 
 /** Send it. Returns {ok} or {ok:false, error}; never throws. */
 async function post({ token, channelId, meta, xml, pine, morning, changed,
-                      baseUrl = API, now = new Date() }) {
+                      scriptOnly = false, baseUrl = API, now = new Date() }) {
   if (!token || !channelId) {
     return { ok: false, error: 'not configured - no bot token or channel id' };
   }
@@ -122,14 +149,24 @@ async function post({ token, channelId, meta, xml, pine, morning, changed,
   const day = now.toISOString().slice(0, 10);
   const form = new FormData();
   form.append('payload_json',
-    JSON.stringify(message({ meta, morning, changed, hasPine: Boolean(pine) })));
-  form.append('files[0]',
-    new Blob([xml], { type: 'application/xml' }), `NQ-Levels-${day}.xml`);
+    JSON.stringify(message({ meta, morning, changed, hasPine: Boolean(pine), scriptOnly })));
+
+  // In script-only mode the indicator IS the payload, so it takes files[0] and
+  // the levels file is not sent at all. Guarded rather than assumed: a
+  // script-only post with no script would be an empty message.
+  if (scriptOnly) {
+    if (!pine) return { ok: false, error: 'script-only, but no indicator was built' };
+    form.append('files[0]',
+      new Blob([pine], { type: 'text/plain' }), `Goldbach-Gamma-NQ-${day}.txt`);
+  } else {
+    form.append('files[0]',
+      new Blob([xml], { type: 'application/xml' }), `NQ-Levels-${day}.xml`);
   // Appended, never interleaved: with no indicator the request is byte-for-byte
   // what it has always been, and files[0] never moves.
-  if (pine) {
-    form.append('files[1]',
-      new Blob([pine], { type: 'text/plain' }), `Goldbach-Gamma-NQ-${day}.txt`);
+    if (pine) {
+      form.append('files[1]',
+        new Blob([pine], { type: 'text/plain' }), `Goldbach-Gamma-NQ-${day}.txt`);
+    }
   }
 
   try {

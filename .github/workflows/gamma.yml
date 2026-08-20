@@ -105,6 +105,10 @@ jobs:
         env:
           FRIENDS_BOT_TOKEN: ${{ secrets.FRIENDS_BOT_TOKEN }}
           FRIENDS_CHANNEL_ID: ${{ secrets.FRIENDS_CHANNEL_ID }}
+          # The friends' server gets the indicator and nothing else - a level
+          # list posted there once buried the download people came for. With
+          # this set an intraday run has nothing new to send and stays quiet.
+          FRIENDS_SCRIPT_ONLY: '1'
         run: node friends-update.js ${{ steps.cadence.outputs.morning == 'true' && '--morning' || '' }}
 
       # state/ holds two unrelated things: friends.json, which records what the
