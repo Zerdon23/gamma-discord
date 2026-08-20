@@ -110,3 +110,48 @@ test('the empty-array loop trap is not present', () => {
   assert.ok(!/for\s+\w+\s*=\s*0\s+to\s+array\.size\(LN\)/.test(src), 'clear-down must not use a for');
   assert.match(src, /while array\.size\(LN\) > 0/);
 });
+
+/*
+ * Name collisions with his OTHER TradingView scripts.
+ *
+ * 2026-08-20: pasting this indicator produced `"gG" is already defined`
+ * (CE10095). The generated file was clean - it was sharing a Pine Editor tab
+ * with his Gamma Suite script, which also declares `gG`, and a bare `lo`
+ * collided the same way. A first fix using `gb*` then collided with his AXION
+ * Levels script, which carries its own Goldbach block.
+ *
+ * Pine cannot stop two scripts sharing one tab. It costs nothing to make sure
+ * the name that collides is never one of ours, so every top-level name this
+ * generator declares is either descriptive or carries the gbx prefix.
+ */
+test('no short generic top-level names - they collide across his scripts', () => {
+  const src = P.build(meta);
+  const generic = [];
+  for (const line of src.split(/\r?\n/)) {
+    const m = line.match(/^([A-Za-z_][A-Za-z0-9_]*)\s*=[^=]/);
+    if (m && m[1].length <= 3 && !m[1].startsWith('gbx')) generic.push(m[1]);
+  }
+  assert.deepStrictEqual(generic, [],
+    `short generic names invite a cross-script collision: ${generic.join(', ')}`);
+});
+
+test('the Goldbach range vars keep the gbx prefix', () => {
+  const src = P.build(meta);
+  for (const n of ['gbxLo', 'gbxHi', 'gbxEq', 'gbxGroup']) {
+    // Deliberately not a template literal: \b inside one is a
+    // BACKSPACE character, so the obvious RegExp hunts U+0008 and never
+    // matches - that is what failed this test against a correct file.
+    // No escape sequences on purpose. This assertion has now been mangled
+    // twice by shell quoting, and a backslash-b inside a template literal
+    // is a BACKSPACE anyway - the obvious RegExp hunts U+0008 and never
+    // matches, which is how a correct file failed this test.
+    const LF = String.fromCharCode(10);
+    const CR = String.fromCharCode(13);
+    const decls = src.split(LF).map((l) => l.split(CR).join(''));
+    assert.ok(decls.some((l) => l.startsWith(n + ' ') || l.startsWith(n + '=')),
+      n + ' is not declared');
+  }
+  // The exact names that bit him.
+  assert.ok(!/^gG\s*=/m.test(src), 'gG is back - it collides with Gamma Suite');
+  assert.ok(!/^lo\s*=/m.test(src), 'lo is back - it collides with Gamma Suite');
+});

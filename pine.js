@@ -117,18 +117,18 @@ function build(meta) {
 // =====================================================================
 indicator("Goldbach + Gamma - ${symbol}", overlay = true, max_lines_count = 500, max_labels_count = 500, max_boxes_count = 20)
 
-gG = "Goldbach"
-showGb  = input.bool(true,  "Show the Goldbach grid",        group = gG)
-po3Mode = input.string("Auto", "Range size", options = ["Auto", "27", "81", "243", "729", "2187", "6561"], group = gG)
-shiftBl = input.int(0, "Shift the range (blocks)", minval = -3, maxval = 3, group = gG)
-showExt = input.bool(true,  "Extensions (-0.111 / 1.111)",   group = gG)
-showCE  = input.bool(true,  "CE midpoints",                  group = gG)
-showSh  = input.bool(true,  "Shade premium / discount",      group = gG)
-showLb  = input.bool(true,  "Labels",                        group = gG)
+gbxGroup = "Goldbach"
+showGb  = input.bool(true,  "Show the Goldbach grid",        group = gbxGroup)
+po3Mode = input.string("Auto", "Range size", options = ["Auto", "27", "81", "243", "729", "2187", "6561"], group = gbxGroup)
+shiftBl = input.int(0, "Shift the range (blocks)", minval = -3, maxval = 3, group = gbxGroup)
+showExt = input.bool(true,  "Extensions (-0.111 / 1.111)",   group = gbxGroup)
+showCE  = input.bool(true,  "CE midpoints",                  group = gbxGroup)
+showSh  = input.bool(true,  "Shade premium / discount",      group = gbxGroup)
+showLb  = input.bool(true,  "Labels",                        group = gbxGroup)
 
-gX = "Gamma (built ${day})"
-showGx  = input.bool(true,  "Show today's gamma levels",     group = gX)
-showTag = input.bool(true,  "Show the build date on screen", group = gX)
+gbxGamma = "Gamma (built ${day})"
+showGx  = input.bool(true,  "Show today's gamma levels",     group = gbxGamma)
+showTag = input.bool(true,  "Show the build date on screen", group = gbxGamma)
 
 fracs  = array.from(${fracs})
 codes  = array.from(${codes})
@@ -157,10 +157,10 @@ autoBlock(p) =>
             best  := s
     best
 
-po3 = po3Mode == "Auto" ? autoBlock(close) : str.tonumber(po3Mode)
-lo  = math.floor(close / po3) * po3 + shiftBl * po3
-hi  = lo + po3
-eq  = lo + po3 * 0.5
+gbxPo3 = po3Mode == "Auto" ? autoBlock(close) : str.tonumber(po3Mode)
+gbxLo  = math.floor(close / gbxPo3) * gbxPo3 + shiftBl * gbxPo3
+gbxHi  = gbxLo + gbxPo3
+gbxEq  = gbxLo + gbxPo3 * 0.5
 
 var line[]  LN = array.new<line>()
 var label[] LB = array.new<label>()
@@ -185,8 +185,8 @@ if barstate.islast
     R = bar_index + 30
 
     if showGb and showSh
-        array.push(BX, box.new(L, hi, R, eq, border_color = color.new(color.red, 100), bgcolor = color.rgb(224, 90, 90, 96)))
-        array.push(BX, box.new(L, eq, R, lo, border_color = color.new(color.green, 100), bgcolor = color.rgb(90, 200, 140, 96)))
+        array.push(BX, box.new(L, gbxHi, R, gbxEq, border_color = color.new(color.red, 100), bgcolor = color.rgb(224, 90, 90, 96)))
+        array.push(BX, box.new(L, gbxEq, R, gbxLo, border_color = color.new(color.green, 100), bgcolor = color.rgb(90, 200, 140, 96)))
 
     float prev = na
     if showGb
@@ -196,7 +196,7 @@ if barstate.islast
             // to be measured between DRAWN levels, so a skipped extension must
             // also be skipped by prev.
             if (f >= 0 and f <= 1) or showExt
-                p = lo + (hi - lo) * f
+                p = gbxLo + (gbxHi - gbxLo) * f
                 c = array.get(fcols, i)
                 array.push(LN, line.new(L, p, R, p, extend = extend.both, color = c, width = array.get(fwidth, i), style = array.get(fdash, i) ? line.style_dashed : line.style_solid))
                 if showLb
