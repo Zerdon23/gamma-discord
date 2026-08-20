@@ -1,0 +1,119 @@
+//@version=6
+// =====================================================================
+//  Goldbach + Gamma - NQ
+//  Gamma levels built 2026-08-20 from CBOE's free delayed _NDX chain.
+//
+//  The Goldbach grid is arithmetic and never goes stale - it re-derives
+//  itself from whatever price is on your chart.
+//
+//  The gamma levels are this morning's numbers written in. They come from
+//  open interest, which rebuilds overnight, so they are right for one
+//  session. Grab the new file each morning.
+//
+//  Context and targets, not triggers.
+// =====================================================================
+indicator("Goldbach + Gamma - NQ", overlay = true, max_lines_count = 500, max_labels_count = 500, max_boxes_count = 20)
+
+gG = "Goldbach"
+showGb  = input.bool(true,  "Show the Goldbach grid",        group = gG)
+po3Mode = input.string("Auto", "Range size", options = ["Auto", "27", "81", "243", "729", "2187", "6561"], group = gG)
+shiftBl = input.int(0, "Shift the range (blocks)", minval = -3, maxval = 3, group = gG)
+showExt = input.bool(true,  "Extensions (-0.111 / 1.111)",   group = gG)
+showCE  = input.bool(true,  "CE midpoints",                  group = gG)
+showSh  = input.bool(true,  "Shade premium / discount",      group = gG)
+showLb  = input.bool(true,  "Labels",                        group = gG)
+
+gX = "Gamma (built 2026-08-20)"
+showGx  = input.bool(true,  "Show today's gamma levels",     group = gX)
+showTag = input.bool(true,  "Show the build date on screen", group = gX)
+
+fracs  = array.from(-0.111, 0.000, 0.030, 0.110, 0.170, 0.290, 0.410, 0.470, 0.500, 0.530, 0.590, 0.710, 0.830, 0.890, 0.970, 1.000, 1.111)
+codes  = array.from("Ext", "Low", "RB", "OB", "FVG", "LV", "BR", "MB", "EQ", "MB", "BR", "LV", "FVG", "OB", "RB", "High", "Ext")
+fnames = array.from("-0.111", "0", "0.03", "0.11", "0.17", "0.29", "0.41", "0.47", "0.5", "0.53", "0.59", "0.71", "0.83", "0.89", "0.97", "1", "1.111")
+fcols  = array.from(color.rgb(90, 150, 255), color.rgb(224, 90, 90), color.rgb(224, 110, 110), color.rgb(74, 158, 255), color.rgb(90, 200, 215), color.rgb(180, 140, 255), color.rgb(232, 176, 72), color.rgb(200, 150, 110), color.rgb(240, 200, 90), color.rgb(200, 150, 110), color.rgb(232, 176, 72), color.rgb(180, 140, 255), color.rgb(90, 200, 215), color.rgb(74, 158, 255), color.rgb(224, 110, 110), color.rgb(224, 90, 90), color.rgb(90, 150, 255))
+fwidth = array.from(1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1)
+fdash  = array.from(true, false, true, true, true, true, true, true, false, true, true, true, true, true, true, false, true)
+
+gPrice = array.from(28637.00, 29187.00, 29471.47, 28987.00, 28737.00, 29737.00, 29687.00, 29087.00, 27087.00, 29742.75, 29375.75, 29689.75, 29240.00)
+gText  = array.from("CALL WALL 28,637", "PUT WALL 29,187", "GAMMA FLIP 29,471", "+GAMMA 28,987 - 523m", "-GAMMA 28,737 - 357m", "+GAMMA 29,737 - 307m", "-GAMMA 29,687 - 287m", "+GAMMA 29,087 - 284m", "-GAMMA 27,087 - 271m", "PRIOR DAY HIGH 29,743", "PRIOR DAY LOW 29,376", "OVERNIGHT HIGH 29,690", "OVERNIGHT LOW 29,240")
+gCol   = array.from(color.rgb(196, 106, 106), color.rgb(106, 191, 138), color.rgb(232, 212, 77), color.rgb(127, 182, 217), color.rgb(192, 138, 208), color.rgb(127, 182, 217), color.rgb(192, 138, 208), color.rgb(127, 182, 217), color.rgb(192, 138, 208), color.rgb(191, 199, 213), color.rgb(191, 199, 213), color.rgb(191, 199, 213), color.rgb(191, 199, 213))
+gWid   = array.from(3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1)
+gSty   = array.from(line.style_solid, line.style_solid, line.style_dashed, line.style_solid, line.style_solid, line.style_solid, line.style_solid, line.style_solid, line.style_solid, line.style_dotted, line.style_dotted, line.style_dotted, line.style_dotted)
+
+// These prices are NQ prices. On any other symbol they are meaningless,
+// so the gamma half hides itself rather than drawing confident nonsense.
+isRight = str.contains(syminfo.ticker, "NQ")
+
+autoBlock(p) =>
+    best  = 729.0
+    bestd = 1e9
+    for s in array.from(27.0, 81.0, 243.0, 729.0, 2187.0, 6561.0)
+        d = math.abs(s / p - 0.03)
+        if d < bestd
+            bestd := d
+            best  := s
+    best
+
+po3 = po3Mode == "Auto" ? autoBlock(close) : str.tonumber(po3Mode)
+lo  = math.floor(close / po3) * po3 + shiftBl * po3
+hi  = lo + po3
+eq  = lo + po3 * 0.5
+
+var line[]  LN = array.new<line>()
+var label[] LB = array.new<label>()
+var box[]   BX = array.new<box>()
+var table   TG = table.new(position.bottom_right, 1, 1)
+
+if barstate.islast
+    // pop-until-empty, NOT "for i = 0 to size - 1". Pine counts DOWNWARD when
+    // the end is below the start, so on an empty array that loop runs with
+    // i = 0 and then i = -1 and throws.
+    while array.size(LN) > 0
+        line.delete(array.pop(LN))
+    while array.size(LB) > 0
+        label.delete(array.pop(LB))
+    while array.size(BX) > 0
+        box.delete(array.pop(BX))
+
+    // Clamped at 0: a freshly loaded or very short chart has fewer than 300
+    // bars, and a negative bar index is an error rather than a wide line.
+    // extend.both means these endpoints only decide where labels sit anyway.
+    L = math.max(0, bar_index - 300)
+    R = bar_index + 30
+
+    if showGb and showSh
+        array.push(BX, box.new(L, hi, R, eq, border_color = color.new(color.red, 100), bgcolor = color.rgb(224, 90, 90, 96)))
+        array.push(BX, box.new(L, eq, R, lo, border_color = color.new(color.green, 100), bgcolor = color.rgb(90, 200, 140, 96)))
+
+    float prev = na
+    if showGb
+        for i = 0 to array.size(fracs) - 1
+            f = array.get(fracs, i)
+            // A wrapping condition rather than "continue" - the CE midpoint has
+            // to be measured between DRAWN levels, so a skipped extension must
+            // also be skipped by prev.
+            if (f >= 0 and f <= 1) or showExt
+                p = lo + (hi - lo) * f
+                c = array.get(fcols, i)
+                array.push(LN, line.new(L, p, R, p, extend = extend.both, color = c, width = array.get(fwidth, i), style = array.get(fdash, i) ? line.style_dashed : line.style_solid))
+                if showLb
+                    t = array.get(fnames, i) + "  " + array.get(codes, i) + "  " + str.tostring(p, "#,##0.00")
+                    array.push(LB, label.new(R, p, t, style = label.style_label_left, textcolor = c, color = color.new(color.black, 80), size = size.small))
+                if showCE and not na(prev)
+                    m = (prev + p) / 2
+                    array.push(LN, line.new(L, m, R, m, extend = extend.both, color = color.rgb(120, 130, 145, 40), width = 1, style = line.style_dotted))
+                prev := p
+
+    if showGx and isRight
+        for i = 0 to array.size(gPrice) - 1
+            p = array.get(gPrice, i)
+            c = array.get(gCol, i)
+            array.push(LN, line.new(L, p, R, p, extend = extend.both, color = c, width = array.get(gWid, i), style = array.get(gSty, i)))
+            if showLb
+                array.push(LB, label.new(R, p, array.get(gText, i), style = label.style_label_left, textcolor = c, color = color.new(color.black, 80), size = size.small))
+
+    if showGx and not isRight
+        array.push(LB, label.new(bar_index, close, "Gamma levels are NQ prices - hidden on this symbol. The Goldbach grid still applies.", style = label.style_label_left, textcolor = color.rgb(232, 176, 72), color = color.new(color.black, 70), size = size.small))
+
+    if showTag
+        table.cell(TG, 0, 0, "Goldbach + Gamma   gamma built 2026-08-20   walls rebuild overnight", text_color = color.rgb(170, 180, 195), bgcolor = color.new(color.black, 70), text_size = size.tiny)
