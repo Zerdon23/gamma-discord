@@ -14,18 +14,18 @@
 // =====================================================================
 indicator("Goldbach + Gamma - NQ", overlay = true, max_lines_count = 500, max_labels_count = 500, max_boxes_count = 20)
 
-gG = "Goldbach"
-showGb  = input.bool(true,  "Show the Goldbach grid",        group = gG)
-po3Mode = input.string("Auto", "Range size", options = ["Auto", "27", "81", "243", "729", "2187", "6561"], group = gG)
-shiftBl = input.int(0, "Shift the range (blocks)", minval = -3, maxval = 3, group = gG)
-showExt = input.bool(true,  "Extensions (-0.111 / 1.111)",   group = gG)
-showCE  = input.bool(true,  "CE midpoints",                  group = gG)
-showSh  = input.bool(true,  "Shade premium / discount",      group = gG)
-showLb  = input.bool(true,  "Labels",                        group = gG)
+gbxGroup = "Goldbach"
+showGb  = input.bool(true,  "Show the Goldbach grid",        group = gbxGroup)
+po3Mode = input.string("Auto", "Range size", options = ["Auto", "27", "81", "243", "729", "2187", "6561"], group = gbxGroup)
+shiftBl = input.int(0, "Shift the range (blocks)", minval = -3, maxval = 3, group = gbxGroup)
+showExt = input.bool(true,  "Extensions (-0.111 / 1.111)",   group = gbxGroup)
+showCE  = input.bool(true,  "CE midpoints",                  group = gbxGroup)
+showSh  = input.bool(true,  "Shade premium / discount",      group = gbxGroup)
+showLb  = input.bool(true,  "Labels",                        group = gbxGroup)
 
-gX = "Gamma (built 2026-08-20)"
-showGx  = input.bool(true,  "Show today's gamma levels",     group = gX)
-showTag = input.bool(true,  "Show the build date on screen", group = gX)
+gbxGamma = "Gamma (built 2026-08-20)"
+showGx  = input.bool(true,  "Show today's gamma levels",     group = gbxGamma)
+showTag = input.bool(true,  "Show the build date on screen", group = gbxGamma)
 
 fracs  = array.from(-0.111, 0.000, 0.030, 0.110, 0.170, 0.290, 0.410, 0.470, 0.500, 0.530, 0.590, 0.710, 0.830, 0.890, 0.970, 1.000, 1.111)
 codes  = array.from("Ext", "Low", "RB", "OB", "FVG", "LV", "BR", "MB", "EQ", "MB", "BR", "LV", "FVG", "OB", "RB", "High", "Ext")
@@ -34,8 +34,8 @@ fcols  = array.from(color.rgb(90, 150, 255), color.rgb(224, 90, 90), color.rgb(2
 fwidth = array.from(1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1)
 fdash  = array.from(true, false, true, true, true, true, true, true, false, true, true, true, true, true, true, false, true)
 
-gPrice = array.from(28616.00, 29166.00, 29446.66, 28966.00, 28716.00, 29066.00, 29666.00, 27066.00, 27566.00, 29742.75, 29375.75, 29689.75, 29240.00)
-gText  = array.from("CALL WALL 28,616", "PUT WALL 29,166", "GAMMA FLIP 29,447", "+GAMMA 28,966 - 524m", "-GAMMA 28,716 - 357m", "+GAMMA 29,066 - 296m", "-GAMMA 29,666 - 291m", "-GAMMA 27,066 - 271m", "-GAMMA 27,566 - 238m", "PRIOR DAY HIGH 29,743", "PRIOR DAY LOW 29,376", "OVERNIGHT HIGH 29,690", "OVERNIGHT LOW 29,240")
+gPrice = array.from(28973.00, 29173.00, 29447.04, 28623.00, 28723.00, 29073.00, 29673.00, 28073.00, 27073.00, 29742.75, 29375.75, 29689.75, 29240.00)
+gText  = array.from("CALL WALL 28,973", "PUT WALL 29,173", "GAMMA FLIP 29,447", "+GAMMA 28,623 - 579m", "-GAMMA 28,723 - 358m", "+GAMMA 29,073 - 338m", "-GAMMA 29,673 - 301m", "-GAMMA 28,073 - 287m", "-GAMMA 27,073 - 271m", "PRIOR DAY HIGH 29,743", "PRIOR DAY LOW 29,376", "OVERNIGHT HIGH 29,690", "OVERNIGHT LOW 29,240")
 gCol   = array.from(color.rgb(196, 106, 106), color.rgb(106, 191, 138), color.rgb(232, 212, 77), color.rgb(127, 182, 217), color.rgb(192, 138, 208), color.rgb(127, 182, 217), color.rgb(192, 138, 208), color.rgb(192, 138, 208), color.rgb(192, 138, 208), color.rgb(191, 199, 213), color.rgb(191, 199, 213), color.rgb(191, 199, 213), color.rgb(191, 199, 213))
 gWid   = array.from(3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1)
 gSty   = array.from(line.style_solid, line.style_solid, line.style_dashed, line.style_solid, line.style_solid, line.style_solid, line.style_solid, line.style_solid, line.style_solid, line.style_dotted, line.style_dotted, line.style_dotted, line.style_dotted)
@@ -54,10 +54,10 @@ autoBlock(p) =>
             best  := s
     best
 
-po3 = po3Mode == "Auto" ? autoBlock(close) : str.tonumber(po3Mode)
-lo  = math.floor(close / po3) * po3 + shiftBl * po3
-hi  = lo + po3
-eq  = lo + po3 * 0.5
+gbxPo3 = po3Mode == "Auto" ? autoBlock(close) : str.tonumber(po3Mode)
+gbxLo  = math.floor(close / gbxPo3) * gbxPo3 + shiftBl * gbxPo3
+gbxHi  = gbxLo + gbxPo3
+gbxEq  = gbxLo + gbxPo3 * 0.5
 
 var line[]  LN = array.new<line>()
 var label[] LB = array.new<label>()
@@ -82,8 +82,8 @@ if barstate.islast
     R = bar_index + 30
 
     if showGb and showSh
-        array.push(BX, box.new(L, hi, R, eq, border_color = color.new(color.red, 100), bgcolor = color.rgb(224, 90, 90, 96)))
-        array.push(BX, box.new(L, eq, R, lo, border_color = color.new(color.green, 100), bgcolor = color.rgb(90, 200, 140, 96)))
+        array.push(BX, box.new(L, gbxHi, R, gbxEq, border_color = color.new(color.red, 100), bgcolor = color.rgb(224, 90, 90, 96)))
+        array.push(BX, box.new(L, gbxEq, R, gbxLo, border_color = color.new(color.green, 100), bgcolor = color.rgb(90, 200, 140, 96)))
 
     float prev = na
     if showGb
@@ -93,7 +93,7 @@ if barstate.islast
             // to be measured between DRAWN levels, so a skipped extension must
             // also be skipped by prev.
             if (f >= 0 and f <= 1) or showExt
-                p = lo + (hi - lo) * f
+                p = gbxLo + (gbxHi - gbxLo) * f
                 c = array.get(fcols, i)
                 array.push(LN, line.new(L, p, R, p, extend = extend.both, color = c, width = array.get(fwidth, i), style = array.get(fdash, i) ? line.style_dashed : line.style_solid))
                 if showLb
