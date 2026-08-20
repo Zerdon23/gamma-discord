@@ -107,15 +107,26 @@ jobs:
           FRIENDS_CHANNEL_ID: ${{ secrets.FRIENDS_CHANNEL_ID }}
         run: node friends-update.js ${{ steps.cadence.outputs.morning == 'true' && '--morning' || '' }}
 
-      - name: Remember what the crew channel was told
+      # state/ holds two unrelated things: friends.json, which records what the
+      # crew channel was last told, and basis.json, which records the last
+      # NDX->NQ basis measured during cash hours. basis.json changes on almost
+      # every run, so a blanket "Crew channel updated" message claimed a post
+      # every 30 minutes while FRIENDS_BOT_TOKEN was unset and the crew bot had
+      # never sent a single message. Name whichever actually changed.
+      - name: Remember what this run recorded
         run: |
           git add state/ || true
           if git diff --cached --quiet; then
-            echo "No crew post to record."
+            echo "Nothing to record."
           else
+            if git diff --cached --name-only | grep -q 'state/friends.json'; then
+              MSG="Crew channel updated $(date -u +%Y-%m-%dT%H:%MZ)"
+            else
+              MSG="Basis carried forward $(date -u +%Y-%m-%dT%H:%MZ)"
+            fi
             git config user.name "github-actions"
             git config user.email "github-actions@users.noreply.github.com"
-            git commit -m "Crew channel updated $(date -u +%Y-%m-%dT%H:%MZ)"
+            git commit -m "$MSG"
             git pull --rebase --autostash
             git push
           fi
