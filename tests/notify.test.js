@@ -147,27 +147,54 @@ test('a moved wall posts', () => {
   assert.strictEqual(d.post, true);
 });
 
-test('a second post inside 90 minutes is blocked even though levels moved', () => {
+// A gap expressed against the constant, so tightening the cadence cannot
+// silently turn this test into one that asserts nothing.
+const agoMinutes = (m) => new Date(MIDDAY.getTime() - m * 60000).toISOString();
+
+test('a second post inside the minimum gap is blocked even though levels moved', () => {
   const moved = LEVELS.map((l) =>
     l.type === 'CALL_WALL' ? { ...l, price: 29760 } : l);
-  // 17:00Z is 60 minutes before the 18:00Z "now".
   const d = N.decide({
     levels: moved, now: MIDDAY,
-    state: clean({ lastAt: '2026-08-18T17:00:00Z' }),
+    state: clean({ lastAt: agoMinutes(N.MIN_GAP_MINUTES - 5) }),
   });
   assert.strictEqual(d.post, false);
-  assert.match(d.reason, /90 min|too soon/i);
+  assert.match(d.reason, /too soon/i);
 });
 
-test('the fourth post of the day is blocked', () => {
+// The cadence he asked for, stated as behaviour rather than as a constant:
+// a wall that genuinely moved must reach the channel within half an hour,
+// not wait an hour and a half. Hardcoded on purpose - this is the requirement.
+test('a real change reaches the channel within half an hour', () => {
+  const moved = LEVELS.map((l) =>
+    l.type === 'CALL_WALL' ? { ...l, price: 29760 } : l);
+  const d = N.decide({
+    levels: moved, now: MIDDAY, state: clean({ lastAt: agoMinutes(35) }),
+  });
+  assert.strictEqual(d.post, true);
+});
+
+test('the daily cap still blocks once it is reached', () => {
   const moved = LEVELS.map((l) =>
     l.type === 'CALL_WALL' ? { ...l, price: 29760 } : l);
   const d = N.decide({
     levels: moved, now: MIDDAY,
-    state: clean({ count: 3, lastAt: AGES_AGO }),
+    state: clean({ count: N.MAX_PER_DAY, lastAt: AGES_AGO }),
   });
   assert.strictEqual(d.post, false);
-  assert.match(d.reason, /cap|3 already/i);
+  assert.match(d.reason, /cap/i);
+});
+
+// The cap is a runaway backstop, not the cadence control. On a session where
+// the walls genuinely keep moving, the 30-minute gap is what should decide -
+// a cap of three would silence the channel by lunchtime.
+test('a busy session is not silenced after three posts', () => {
+  const moved = LEVELS.map((l) =>
+    l.type === 'CALL_WALL' ? { ...l, price: 29760 } : l);
+  const d = N.decide({
+    levels: moved, now: MIDDAY, state: clean({ count: 3, lastAt: AGES_AGO }),
+  });
+  assert.strictEqual(d.post, true);
 });
 
 test('a new day resets the daily cap', () => {

@@ -26,8 +26,17 @@
 // Strikes on the NDX grid land ~25 points apart once scaled, and the flip
 // drifts by low single digits, so 10 separates a real move from noise.
 const TOLERANCE = 10;
-const MIN_GAP_MINUTES = 90;
-const MAX_PER_DAY = 3;
+// How fresh the channel is allowed to be. The workflow already wakes every 30
+// minutes; this is what decides whether a wake is allowed to speak. It was 90
+// minutes with a cap of 3, which meant a wall could move at 10:05 and nobody
+// heard about it until 11:30.
+//
+// The gap is the cadence control. The cap is a runaway backstop only - set far
+// above any real day so that a stuck fingerprint or a clock problem is bounded,
+// while an ordinary session is limited by the 30 minutes and by `moved()`.
+// A cap low enough to bind is a cap that silences the channel by lunchtime.
+const MIN_GAP_MINUTES = 30;
+const MAX_PER_DAY = 20;
 
 const ET = new Intl.DateTimeFormat('en-US', {
   timeZone: 'America/New_York',
