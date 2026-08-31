@@ -1,59 +1,59 @@
 {
-  "builtAt": "2026-08-28T22:32:11.645Z",
+  "builtAt": "2026-08-31T19:12:17.714Z",
   "symbol": "NQ",
-  "basis": 64,
-  "indexSpot": 29433.43,
-  "nqSpot": 29497.43,
+  "basis": 61,
+  "indexSpot": 29352.44,
+  "nqSpot": 29413.44,
   "regime": "positive",
-  "netGex": 1020706078.0828217,
+  "netGex": 955131993.9337553,
   "source": "CBOE delayed chain (_NDX) + Yahoo NQ=F",
   "note": "Context and targets, not triggers. Walls are open-interest based and rebuild overnight.",
-  "basisSource": "carried",
+  "basisSource": "measured",
   "levels": [
     {
       "type": "CALL_WALL",
-      "price": 29339,
-      "label": "CALL WALL 29,339"
+      "price": 29336,
+      "label": "CALL WALL 29,336"
     },
     {
       "type": "PUT_WALL",
-      "price": 29489,
-      "label": "PUT WALL 29,489"
+      "price": 29661,
+      "label": "PUT WALL 29,661"
     },
     {
       "type": "FLIP",
-      "price": 28957.62,
-      "label": "GAMMA FLIP 28,958"
+      "price": 29302.73,
+      "label": "GAMMA FLIP 29,303"
     },
     {
       "type": "GAMMA_POS",
-      "price": 29514,
-      "label": "+GAMMA 29,514 · 760m"
-    },
-    {
-      "type": "GAMMA_NEG",
-      "price": 29664,
-      "label": "-GAMMA 29,664 · 478m"
+      "price": 29711,
+      "label": "+GAMMA 29,711 · 443m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 29714,
-      "label": "+GAMMA 29,714 · 430m"
+      "price": 29561,
+      "label": "+GAMMA 29,561 · 346m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 29614,
-      "label": "+GAMMA 29,614 · 342m"
+      "price": 29611,
+      "label": "+GAMMA 29,611 · 325m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 29564,
-      "label": "+GAMMA 29,564 · 329m"
+      "price": 29511,
+      "label": "+GAMMA 29,511 · 307m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 30064,
-      "label": "+GAMMA 30,064 · 286m"
+      "price": 30061,
+      "label": "+GAMMA 30,061 · 295m"
+    },
+    {
+      "type": "GAMMA_POS",
+      "price": 29136,
+      "label": "+GAMMA 29,136 · 274m"
     },
     {
       "type": "PDH",
@@ -67,13 +67,13 @@
     },
     {
       "type": "ONH",
-      "price": 29707,
-      "label": "OVERNIGHT HIGH 29,707"
+      "price": 29535,
+      "label": "OVERNIGHT HIGH 29,535"
     },
     {
       "type": "ONL",
-      "price": 29578.25,
-      "label": "OVERNIGHT LOW 29,578"
+      "price": 29273.5,
+      "label": "OVERNIGHT LOW 29,274"
     }
   ]
 }
