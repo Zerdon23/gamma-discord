@@ -93,6 +93,18 @@ jobs:
       # levels/, and a file people paste into TradingView should change once a
       # day rather than every thirty minutes. It runs here, before the crew
       # post, because friends-update.js attaches whatever this writes.
+      # The AQQ Levels and SMT halves of the indicator are Brandon's paid
+      # mentorship code. They live in a PRIVATE repo and are checked out here
+      # for the build only. This repo is public, so the finished script is
+      # gitignored and reaches the crew channel as an attachment, never a commit.
+      - name: Fetch the private AQQ fragments
+        if: steps.cadence.outputs.morning == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: Zerdon23/aqq-friends-pine
+          token: ${{ secrets.AQQ_REPO_TOKEN }}
+          path: aqq
+
       - name: Build the TradingView indicator
         if: steps.cadence.outputs.morning == 'true'
         run: node build-pine.js
@@ -100,7 +112,7 @@ jobs:
       - name: Commit the levels file
         if: steps.cadence.outputs.morning == 'true'
         run: |
-          git add levels/ tradingview/
+          git add levels/
           if git diff --cached --quiet; then
             echo "Levels unchanged."
           else
