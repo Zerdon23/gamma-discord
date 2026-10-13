@@ -1,72 +1,72 @@
 {
-  "day": "2026-10-12",
+  "day": "2026-10-13",
   "count": 1,
-  "lastAt": "2026-10-12T18:21:39.782Z",
+  "lastAt": "2026-10-13T19:27:24.012Z",
   "levels": [
     {
       "type": "CALL_WALL",
-      "price": 31235,
-      "label": "CALL WALL 31,235"
+      "price": 29695,
+      "label": "CALL WALL 29,695"
     },
     {
       "type": "PUT_WALL",
-      "price": 30885,
-      "label": "PUT WALL 30,885"
+      "price": 28220,
+      "label": "PUT WALL 28,220"
     },
     {
       "type": "FLIP",
-      "price": 30900.33,
-      "label": "GAMMA FLIP 30,900"
-    },
-    {
-      "type": "GAMMA_POS",
-      "price": 29710,
-      "label": "+GAMMA 29,710 · 322m"
+      "price": 30779.14,
+      "label": "GAMMA FLIP 30,779"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 30435,
-      "label": "-GAMMA 30,435 · 318m"
+      "price": 30770,
+      "label": "-GAMMA 30,770 · 318m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 28235,
-      "label": "-GAMMA 28,235 · 315m"
+      "price": 30420,
+      "label": "-GAMMA 30,420 · 311m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 32235,
-      "label": "+GAMMA 32,235 · 280m"
+      "price": 32220,
+      "label": "+GAMMA 32,220 · 282m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 31560,
-      "label": "+GAMMA 31,560 · 276m"
+      "price": 31020,
+      "label": "+GAMMA 31,020 · 280m"
     },
     {
       "type": "GAMMA_POS",
-      "price": 31735,
-      "label": "+GAMMA 31,735 · 272m"
+      "price": 31220,
+      "label": "+GAMMA 31,220 · 278m"
+    },
+    {
+      "type": "GAMMA_POS",
+      "price": 31545,
+      "label": "+GAMMA 31,545 · 267m"
     },
     {
       "type": "PDH",
-      "price": 31180,
-      "label": "PRIOR DAY HIGH 31,180"
+      "price": 31048.75,
+      "label": "PRIOR DAY HIGH 31,049"
     },
     {
       "type": "PDL",
-      "price": 30991,
-      "label": "PRIOR DAY LOW 30,991"
+      "price": 30844.25,
+      "label": "PRIOR DAY LOW 30,844"
     },
     {
       "type": "ONH",
-      "price": 31289.25,
-      "label": "OVERNIGHT HIGH 31,289"
+      "price": 30906,
+      "label": "OVERNIGHT HIGH 30,906"
     },
     {
       "type": "ONL",
-      "price": 31017.25,
-      "label": "OVERNIGHT LOW 31,017"
+      "price": 30604.75,
+      "label": "OVERNIGHT LOW 30,605"
     }
   ]
 }
