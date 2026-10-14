@@ -1,52 +1,52 @@
 {
   "day": "2026-10-14",
   "count": 1,
-  "lastAt": "2026-10-14T17:28:40.174Z",
+  "lastAt": "2026-10-14T19:00:56.419Z",
   "levels": [
     {
       "type": "CALL_WALL",
-      "price": 29682,
-      "label": "CALL WALL 29,682"
+      "price": 29728,
+      "label": "CALL WALL 29,728"
     },
     {
       "type": "PUT_WALL",
-      "price": 29707,
-      "label": "PUT WALL 29,707"
+      "price": 29753,
+      "label": "PUT WALL 29,753"
     },
     {
       "type": "FLIP",
-      "price": 30494.65,
-      "label": "GAMMA FLIP 30,495"
+      "price": 30406.52,
+      "label": "GAMMA FLIP 30,407"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 28207,
-      "label": "-GAMMA 28,207 · 366m"
+      "price": 30153,
+      "label": "-GAMMA 30,153 · 384m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 30407,
-      "label": "-GAMMA 30,407 · 346m"
+      "price": 28253,
+      "label": "-GAMMA 28,253 · 366m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 30107,
-      "label": "-GAMMA 30,107 · 288m"
+      "price": 30053,
+      "label": "-GAMMA 30,053 · 355m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 27707,
-      "label": "-GAMMA 27,707 · 264m"
+      "price": 30453,
+      "label": "-GAMMA 30,453 · 320m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 30507,
-      "label": "-GAMMA 30,507 · 255m"
+      "price": 30078,
+      "label": "-GAMMA 30,078 · 283m"
     },
     {
-      "type": "GAMMA_POS",
-      "price": 31532,
-      "label": "+GAMMA 31,532 · 247m"
+      "type": "GAMMA_NEG",
+      "price": 27753,
+      "label": "-GAMMA 27,753 · 263m"
     },
     {
       "type": "PDH",
