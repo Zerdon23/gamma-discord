@@ -220,7 +220,7 @@ test('the indicator rides along as a second attachment', async () => {
     const { body } = d.seen[0];
     assert.match(body, /name="files\[0\]"/, 'the DeepCharts file must still be sent');
     assert.match(body, /name="files\[1\]"/, 'the indicator must be sent alongside it');
-    assert.match(body, /AQQ-Gamma-NQ-2026-08-19\.txt/, 'named with the day');
+    assert.match(body, /Goldbach-Gamma-NQ-2026-08-19\.txt/, 'named with the day');
     assert.match(body, /@version=6/, 'and carrying the script itself');
   } finally { await d.close(); }
 });

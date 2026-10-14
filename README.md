@@ -13,7 +13,7 @@ speaks up **only if a level actually moved**.
 | Output | For | Cadence |
 |---|---|---|
 | `levels/NQ-latest.xml` | DeepCharts — import it and the levels draw themselves | morning |
-| `tradingview/AQQ-Gamma-NQ.txt` | TradingView — sent to the crew channel only, never committed | morning |
+| `tradingview/Goldbach-Gamma-NQ.txt` | TradingView — paste into the Pine Editor | morning |
 | A Discord post | reading on a phone | morning, plus on a real change |
 
 The `.xml` extension on the DeepCharts file is the platform's choice, not a
@@ -23,13 +23,10 @@ mistake — it contains JSON, and renaming it breaks the import.
 
 Two halves, built differently on purpose.
 
-**AQQ Levels and AQQ SMT** are Brandon's own scripts, spliced in verbatim. Both work
-everything out from the viewer's chart, so **they cannot go stale**. They are his
-paid mentorship code, so they live in the PRIVATE repo `Zerdon23/aqq-friends-pine`
-(refresh it with `node extract.js` there after editing the AQQ scripts). The
-workflow checks it out into `aqq/` using the `AQQ_REPO_TOKEN` secret, and the
-finished script is gitignored here because this repo is public. (The Goldbach
-grid this used to carry was removed 2026-10-12.)
+The **Goldbach grid** is arithmetic: the dealing range is
+`floor(price / PO3) * PO3`, and every PD array is a fixed fraction of it. It is
+computed on the viewer's own chart, so it re-derives itself as price moves into
+a new block and works on any symbol. **It cannot go stale.**
 
 The **gamma levels** are this morning's numbers written into the file, because
 Pine cannot fetch anything. They come from open interest, which rebuilds

@@ -18,9 +18,6 @@ function scratch() {
     path.join(__dirname, 'fixtures', 'latest-sample.json'),
     path.join(root, 'levels', 'latest.json'),
   );
-  fs.mkdirSync(path.join(root, 'aqq'));
-  fs.writeFileSync(path.join(root, 'aqq', 'smt.pine'), '// SMT FRAGMENT\n');
-  fs.writeFileSync(path.join(root, 'aqq', 'levels.pine'), '// LEVELS FRAGMENT\n');
   return root;
 }
 
@@ -28,8 +25,8 @@ test('it writes the stable name and a dated archive', () => {
   const root = scratch();
   const out = B.run({ root });
   assert.strictEqual(out.day, '2026-08-19');
-  const stable = path.join(root, 'tradingview', 'AQQ-Gamma-NQ.txt');
-  const dated = path.join(root, 'tradingview', 'AQQ-Gamma-NQ-2026-08-19.txt');
+  const stable = path.join(root, 'tradingview', 'Goldbach-Gamma-NQ.txt');
+  const dated = path.join(root, 'tradingview', 'Goldbach-Gamma-NQ-2026-08-19.txt');
   assert.ok(fs.existsSync(stable), 'stable file missing');
   assert.ok(fs.existsSync(dated), 'dated archive missing');
   assert.strictEqual(fs.readFileSync(stable, 'utf8'), fs.readFileSync(dated, 'utf8'));
@@ -38,7 +35,7 @@ test('it writes the stable name and a dated archive', () => {
 test('the written file is the generated script', () => {
   const root = scratch();
   B.run({ root });
-  const txt = fs.readFileSync(path.join(root, 'tradingview', 'AQQ-Gamma-NQ.txt'), 'utf8');
+  const txt = fs.readFileSync(path.join(root, 'tradingview', 'Goldbach-Gamma-NQ.txt'), 'utf8');
   assert.ok(txt.startsWith('//@version=6'));
   assert.ok(txt.includes('29900'));
 });
@@ -49,20 +46,6 @@ test('rerunning the same morning overwrites rather than piling up', () => {
   B.run({ root });
   const files = fs.readdirSync(path.join(root, 'tradingview'));
   assert.strictEqual(files.length, 2, `expected 2 files, got ${files.join(', ')}`);
-});
-
-test('the AQQ fragments are spliced in', () => {
-  const root = scratch();
-  B.run({ root });
-  const txt = fs.readFileSync(path.join(root, 'tradingview', 'AQQ-Gamma-NQ.txt'), 'utf8');
-  assert.ok(txt.includes('// SMT FRAGMENT') && txt.includes('// LEVELS FRAGMENT'));
-});
-
-test('missing AQQ fragments stop the build rather than ship gamma alone', () => {
-  const root = scratch();
-  fs.rmSync(path.join(root, 'aqq'), { recursive: true });
-  assert.throws(() => B.run({ root }), /aqq-friends-pine/);
-  assert.ok(!fs.existsSync(path.join(root, 'tradingview')), 'nothing may be written');
 });
 
 test('no levels build means nothing is written, and it says so', () => {

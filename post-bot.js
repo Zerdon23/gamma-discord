@@ -80,11 +80,11 @@ function message({ meta, morning, changed, hasPine, scriptOnly = false }) {
   if (scriptOnly) {
     return {
       embeds: [{
-        title: `AQQ + Gamma — NQ · ${day}`,
+        title: `Goldbach + Gamma — NQ · ${day}`,
         description:
           "**Today's indicator.** Download the .txt below, open TradingView, "
           + 'Pine Editor, select all, paste over, **Add to chart**.' + '\n\n'
-          + 'AQQ Levels and SMT are worked out from your chart. The '
+          + 'The Goldbach grid is maths and draws itself on any symbol. The '
           + "gamma levels are baked in as today's NQ numbers, so grab the new "
           + 'file tomorrow rather than leaving this one up.',
         color: 0x4a9eff,
@@ -111,7 +111,7 @@ function message({ meta, morning, changed, hasPine, scriptOnly = false }) {
   // Describing a file that is not there sends people looking for it.
   const pineLine = (morning && hasPine)
     ? '\n\n**On TradingView:** open the Pine Editor, paste the .txt below, '
-      + 'Add to chart. AQQ Levels and SMT are worked out from your chart. The gamma '
+      + 'Add to chart. The Goldbach grid draws itself on any symbol. The gamma '
       + "levels are today's NQ numbers, so grab the new file tomorrow."
     : '';
 
@@ -157,7 +157,7 @@ async function post({ token, channelId, meta, xml, pine, morning, changed,
   if (scriptOnly) {
     if (!pine) return { ok: false, error: 'script-only, but no indicator was built' };
     form.append('files[0]',
-      new Blob([pine], { type: 'text/plain' }), `${require('./pine.js').FILE}-${day}.txt`);
+      new Blob([pine], { type: 'text/plain' }), `Goldbach-Gamma-NQ-${day}.txt`);
   } else {
     form.append('files[0]',
       new Blob([xml], { type: 'application/xml' }), `NQ-Levels-${day}.xml`);
@@ -165,7 +165,7 @@ async function post({ token, channelId, meta, xml, pine, morning, changed,
   // what it has always been, and files[0] never moves.
     if (pine) {
       form.append('files[1]',
-        new Blob([pine], { type: 'text/plain' }), `${require('./pine.js').FILE}-${day}.txt`);
+        new Blob([pine], { type: 'text/plain' }), `Goldbach-Gamma-NQ-${day}.txt`);
     }
   }
 

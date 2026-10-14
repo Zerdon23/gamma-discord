@@ -58,7 +58,7 @@ async function run({
   let pine = null;
   if (morning) {
     try {
-      pine = fs.readFileSync(path.join(root, 'tradingview', `${require('./pine.js').FILE}.txt`));
+      pine = fs.readFileSync(path.join(root, 'tradingview', 'Goldbach-Gamma-NQ.txt'));
     } catch { /* not built - post the levels anyway */ }
   }
   if (!token || !channelId) {
