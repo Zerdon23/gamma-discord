@@ -1,79 +1,79 @@
 {
-  "builtAt": "2026-10-14T19:00:53.488Z",
+  "builtAt": "2026-10-15T17:16:00.942Z",
   "symbol": "NQ",
-  "basis": 253,
-  "indexSpot": 29905.43,
-  "nqSpot": 30158.43,
+  "basis": 226,
+  "indexSpot": 29741.9,
+  "nqSpot": 29967.9,
   "regime": "negative",
-  "netGex": -2867057515.348997,
+  "netGex": -2942291351.149468,
   "source": "CBOE delayed chain (_NDX) + Yahoo NQ=F",
   "note": "Context and targets, not triggers. Walls are open-interest based and rebuild overnight.",
   "basisSource": "measured",
   "levels": [
     {
       "type": "CALL_WALL",
-      "price": 29728,
-      "label": "CALL WALL 29,728"
+      "price": 29701,
+      "label": "CALL WALL 29,701"
     },
     {
       "type": "PUT_WALL",
-      "price": 29753,
-      "label": "PUT WALL 29,753"
+      "price": 29726,
+      "label": "PUT WALL 29,726"
     },
     {
       "type": "FLIP",
-      "price": 30406.52,
-      "label": "GAMMA FLIP 30,407"
+      "price": 30283.48,
+      "label": "GAMMA FLIP 30,283"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 30153,
-      "label": "-GAMMA 30,153 · 384m"
+      "price": 28226,
+      "label": "-GAMMA 28,226 · 380m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 28253,
-      "label": "-GAMMA 28,253 · 366m"
+      "price": 29876,
+      "label": "-GAMMA 29,876 · 355m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 30053,
-      "label": "-GAMMA 30,053 · 355m"
+      "price": 30126,
+      "label": "-GAMMA 30,126 · 337m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 30453,
-      "label": "-GAMMA 30,453 · 320m"
+      "price": 30426,
+      "label": "-GAMMA 30,426 · 269m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 30078,
-      "label": "-GAMMA 30,078 · 283m"
+      "price": 27726,
+      "label": "-GAMMA 27,726 · 268m"
     },
     {
       "type": "GAMMA_NEG",
-      "price": 27753,
-      "label": "-GAMMA 27,753 · 263m"
+      "price": 28726,
+      "label": "-GAMMA 28,726 · 261m"
     },
     {
       "type": "PDH",
-      "price": 30814.75,
-      "label": "PRIOR DAY HIGH 30,815"
+      "price": 30660.75,
+      "label": "PRIOR DAY HIGH 30,661"
     },
     {
       "type": "PDL",
-      "price": 30591.25,
-      "label": "PRIOR DAY LOW 30,591"
+      "price": 30078,
+      "label": "PRIOR DAY LOW 30,078"
     },
     {
       "type": "ONH",
-      "price": 30891.5,
-      "label": "OVERNIGHT HIGH 30,892"
+      "price": 30158.5,
+      "label": "OVERNIGHT HIGH 30,159"
     },
     {
       "type": "ONL",
-      "price": 30535,
-      "label": "OVERNIGHT LOW 30,535"
+      "price": 29711,
+      "label": "OVERNIGHT LOW 29,711"
     }
   ]
 }

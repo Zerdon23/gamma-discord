@@ -1,7 +1,7 @@
 //@version=6
 // =====================================================================
 //  Goldbach + Gamma - NQ
-//  Gamma levels built 2026-10-14 from CBOE's free delayed _NDX chain.
+//  Gamma levels built 2026-10-15 from CBOE's free delayed _NDX chain.
 //
 //  The Goldbach grid is arithmetic and never goes stale - it re-derives
 //  itself from whatever price is on your chart.
@@ -23,7 +23,7 @@ showCE  = input.bool(true,  "CE midpoints",                  group = gbxGroup)
 showSh  = input.bool(true,  "Shade premium / discount",      group = gbxGroup)
 showLb  = input.bool(true,  "Labels",                        group = gbxGroup)
 
-gbxGamma = "Gamma (built 2026-10-14)"
+gbxGamma = "Gamma (built 2026-10-15)"
 showGx  = input.bool(true,  "Show today's gamma levels",     group = gbxGamma)
 showTag = input.bool(true,  "Show the build date on screen", group = gbxGamma)
 
@@ -34,8 +34,8 @@ fcols  = array.from(color.rgb(90, 150, 255), color.rgb(224, 90, 90), color.rgb(2
 fwidth = array.from(1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1)
 fdash  = array.from(true, false, true, true, true, true, true, true, false, true, true, true, true, true, true, false, true)
 
-gPrice = array.from(29728.00, 29753.00, 30406.52, 30153.00, 28253.00, 30053.00, 30453.00, 30078.00, 27753.00, 30814.75, 30591.25, 30891.50, 30535.00)
-gText  = array.from("CALL WALL 29,728", "PUT WALL 29,753", "GAMMA FLIP 30,407", "-GAMMA 30,153 - 384m", "-GAMMA 28,253 - 366m", "-GAMMA 30,053 - 355m", "-GAMMA 30,453 - 320m", "-GAMMA 30,078 - 283m", "-GAMMA 27,753 - 263m", "PRIOR DAY HIGH 30,815", "PRIOR DAY LOW 30,591", "OVERNIGHT HIGH 30,892", "OVERNIGHT LOW 30,535")
+gPrice = array.from(29701.00, 29726.00, 30283.48, 28226.00, 29876.00, 30126.00, 30426.00, 27726.00, 28726.00, 30660.75, 30078.00, 30158.50, 29711.00)
+gText  = array.from("CALL WALL 29,701", "PUT WALL 29,726", "GAMMA FLIP 30,283", "-GAMMA 28,226 - 380m", "-GAMMA 29,876 - 355m", "-GAMMA 30,126 - 337m", "-GAMMA 30,426 - 269m", "-GAMMA 27,726 - 268m", "-GAMMA 28,726 - 261m", "PRIOR DAY HIGH 30,661", "PRIOR DAY LOW 30,078", "OVERNIGHT HIGH 30,159", "OVERNIGHT LOW 29,711")
 gCol   = array.from(color.rgb(196, 106, 106), color.rgb(106, 191, 138), color.rgb(232, 212, 77), color.rgb(192, 138, 208), color.rgb(192, 138, 208), color.rgb(192, 138, 208), color.rgb(192, 138, 208), color.rgb(192, 138, 208), color.rgb(192, 138, 208), color.rgb(191, 199, 213), color.rgb(191, 199, 213), color.rgb(191, 199, 213), color.rgb(191, 199, 213))
 gWid   = array.from(3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1)
 gSty   = array.from(line.style_solid, line.style_solid, line.style_dashed, line.style_solid, line.style_solid, line.style_solid, line.style_solid, line.style_solid, line.style_solid, line.style_dotted, line.style_dotted, line.style_dotted, line.style_dotted)
@@ -116,4 +116,4 @@ if barstate.islast
         array.push(LB, label.new(bar_index, close, "Gamma levels are NQ prices - hidden on this symbol. The Goldbach grid still applies.", style = label.style_label_left, textcolor = color.rgb(232, 176, 72), color = color.new(color.black, 70), size = size.small))
 
     if showTag
-        table.cell(TG, 0, 0, "Goldbach + Gamma   gamma built 2026-10-14   walls rebuild overnight", text_color = color.rgb(170, 180, 195), bgcolor = color.new(color.black, 70), text_size = size.tiny)
+        table.cell(TG, 0, 0, "Goldbach + Gamma   gamma built 2026-10-15   walls rebuild overnight", text_color = color.rgb(170, 180, 195), bgcolor = color.new(color.black, 70), text_size = size.tiny)
