@@ -156,7 +156,7 @@ test('the morning run attaches the indicator when it has been built', async () =
   const w = workspace(); const d = await fakeDiscord();
   try {
     fs.mkdirSync(path.join(w.dir, 'tradingview'));
-    fs.writeFileSync(path.join(w.dir, 'tradingview', 'Goldbach-Gamma-NQ.txt'),
+    fs.writeFileSync(path.join(w.dir, 'tradingview', 'AQQ-Gamma-NQ.txt'),
       '//@version=6\nindicator("x")');
     const r = await run(w, d);
     assert.strictEqual(r.posted, true);
@@ -183,7 +183,7 @@ test('an intraday change post carries no indicator', async () => {
   const w = workspace(); const d = await fakeDiscord();
   try {
     fs.mkdirSync(path.join(w.dir, 'tradingview'));
-    fs.writeFileSync(path.join(w.dir, 'tradingview', 'Goldbach-Gamma-NQ.txt'), '//@version=6');
+    fs.writeFileSync(path.join(w.dir, 'tradingview', 'AQQ-Gamma-NQ.txt'), '//@version=6');
     const r = await run(w, d, { morning: false });
     assert.strictEqual(r.posted, true);
     assert.ok(!d.seen[0].body.includes('name="files[1]"'));

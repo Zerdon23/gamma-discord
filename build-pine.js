@@ -16,7 +16,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const pine = require('./pine.js');
 
-function run({ root = __dirname } = {}) {
+function run({ root = __dirname, fragDir = process.env.AQQ_FRAGMENTS || path.join(root, 'aqq') } = {}) {
   const metaPath = path.join(root, 'levels', 'latest.json');
   if (!fs.existsSync(metaPath)) {
     throw new Error(`no levels/latest.json under ${root} - run build-levels.js first`);
@@ -43,14 +43,30 @@ function run({ root = __dirname } = {}) {
     );
   }
 
-  const src = pine.build(meta);
+  /*
+   * The AQQ Levels and SMT halves come from a PRIVATE repo (aqq-friends-pine),
+   * checked out into ./aqq by the workflow. They are his paid mentorship code
+   * and this repo is public, so they are read from disk at build time and the
+   * finished script is never committed here. Missing fragments stop the build:
+   * a gamma-only file posted under the AQQ name would be worse than none.
+   */
+  const frag = {};
+  for (const k of ['smt', 'levels']) {
+    const f = path.join(fragDir, `${k}.pine`);
+    if (!fs.existsSync(f)) {
+      throw new Error(`no AQQ fragment ${f} - is the private aqq-friends-pine repo checked out?`);
+    }
+    frag[k] = fs.readFileSync(f, 'utf8');
+  }
+
+  const src = pine.build(meta, frag);
   const day = String(meta.builtAt).slice(0, 10);
 
   const dir = path.join(root, 'tradingview');
   fs.mkdirSync(dir, { recursive: true });
 
-  const stable = path.join(dir, 'Goldbach-Gamma-NQ.txt');
-  const dated = path.join(dir, `Goldbach-Gamma-NQ-${day}.txt`);
+  const stable = path.join(dir, `${pine.FILE}.txt`);
+  const dated = path.join(dir, `${pine.FILE}-${day}.txt`);
   fs.writeFileSync(stable, src);
   fs.writeFileSync(dated, src);
 
